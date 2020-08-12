@@ -8,50 +8,80 @@
 #include <algorithm>
 
 /*! 
- * WsjcppError - helper class for errors
+ * WsjcppJsonRpc20Error - helper class for errors
  * */
 
 // must be this json:
 // {"jsonrpc": "2.0", "error": {"code": -32600, "message": "Invalid Request."}, "id": null}
 class WsjcppJsonRpc20Error {
     public:
-        WsjcppJsonRpc20Error(int nCodeError, const std::string &sMessage);
-        int codeError();
-        std::string message();
+        WsjcppJsonRpc20Error(int nErrorCode, const std::string &sErrorMessage);
+        int getErrorCode();
+        std::string getErrorMessage();
     private:
-        std::string m_sMessage;
-        int m_nCodeError;
+        std::string m_sErrorMessage;
+        int m_nErrorCode;
 };
 
 /*! 
- * WsjcppUserSession - 
+ * WsjcppJsonRpc20Session - user data session
  * */
 
-class WsjcppUserSession {
+class WsjcppJsonRpc20UserSession {
     public:
-        WsjcppUserSession();
-        WsjcppUserSession(nlohmann::json const& obj);
+        WsjcppJsonRpc20UserSession();
+        WsjcppJsonRpc20UserSession(nlohmann::json const& obj);
         void fillFrom(nlohmann::json const& obj);
+        nlohmann::json toJson();
 
-        // IUserToken
+        std::string getSessionUuid();
+        void setSessionUuid(const std::string& sSessionUuid);
+
+        long getSessionCreated();
+        void setSessionCreated(long nSessionCreated);
+
+        long getSessionUpdated();
+        void setSessionUpdated(long nSessionUpdated);
+
+        long getSessionExpireAt();
+        void setSessionExpireAt(long nSessionExpire);
+
+        int getUserId();
+        void setUserId(int nId);
+        
+        std::string getUserUuid();
+        void setUserUuid(const std::string &sUserUuid);
+
+        std::string getUserName();
+        void setUserName(const std::string &sUserName);
+
+        std::string getUserEmail();
+        void setUserEmail(const std::string &sUserEmail);
+
+        std::string getUserRole();
+        void setUserRole(const std::string &sUserRole);
+
         bool isAdmin();
         bool isUser();
         bool isTester();
         bool hasRole();
-        std::string nick();
-        void setNick(std::string);
-        std::string email();
-        int userid();
-        std::string userUuid();
-        // TODO json field for customization
-    private:
 
-        std::string m_sRole;
-        std::string m_sEmail;
-        std::string m_sNick;
+        nlohmann::json getSessionCustom();
+        void setSessionCustom(const nlohmann::json &jsonSessionCustom);
+
+    private:
+        std::string TAG;
+        std::string m_sSessionUuid;
+        long m_nSessionCreated;
+        long m_nSessionUpdated;
+        long m_nSessionExpireAt;
+
         int m_nUserID;
         std::string m_sUserUuid;
-        std::string TAG;
+        std::string m_sUserName;
+        std::string m_sUserEmail;
+        std::string m_sUserRole;
+        nlohmann::json m_jsonSessionCustom;
 };
 
 /*! 
@@ -65,27 +95,26 @@ class IWebSocketServer {
         virtual void sendToAll(const nlohmann::json& jsonMessage) = 0;
         // virtual void sendToOne(QWebSocket *pClient, const nlohmann::json &jsonMessage) = 0;
         virtual int getConnectedUsers() = 0;
-        // virtual void setWsjcppUserSession(QWebSocket *pClient, WsjcppUserSession *pUserSession) = 0; 
-        // virtual WsjcppUserSession *getWsjcppUserSession(QWebSocket *pClient) = 0;
+        // virtual void setWsjcppJsonRpc20UserSession(QWebSocket *pClient, WsjcppJsonRpc20UserSession *pUserSession) = 0; 
+        // virtual WsjcppJsonRpc20UserSession *getWsjcppJsonRpc20UserSession(QWebSocket *pClient) = 0;
 };
 
 /*! 
- * CmdInputDef - helper api for define input params and descrip it for docs.
+ * WsjcppJsonRpc20ParamDef - helper api for define input params and descrip it for docs.
  * */
-    
-class CmdInputDef {
+// {"jsonrpc": "2.0", "method": "subtract", "params": {"subtrahend": 23, "minuend": 42}, "id": 3}
+
+class WsjcppJsonRpc20ParamDef {
     public:
-        CmdInputDef(const std::string &sName, const std::string &sDescription);
-        CmdInputDef();
-        CmdInputDef & optional();
-        CmdInputDef & required();
-        CmdInputDef & string_();
-        CmdInputDef & integer_();
-        CmdInputDef & any_();
-        CmdInputDef & bool_();
-        CmdInputDef & description(const std::string &sDescription);
-        CmdInputDef & minval(int minval);
-        CmdInputDef & maxval(int maxval);
+        WsjcppJsonRpc20ParamDef(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef();
+        WsjcppJsonRpc20ParamDef & optional();
+        WsjcppJsonRpc20ParamDef & required();
+        WsjcppJsonRpc20ParamDef & string_();
+        WsjcppJsonRpc20ParamDef & integer_();
+        WsjcppJsonRpc20ParamDef & object_();
+        WsjcppJsonRpc20ParamDef & bool_();
+        WsjcppJsonRpc20ParamDef & description(const std::string &sDescription);
         nlohmann::json toJson();
         
         const std::string &getType();
@@ -98,36 +127,34 @@ class CmdInputDef {
         const std::string &getDescription() const;
 
         bool isRequired();
+        bool isOptional();
         bool isInteger();
         bool isString();
         bool isBool();
-        bool isAny();
+        bool isObject();
 
-        bool isMinVal(); // TODO: redesign to validators
-        int getMinVal(); // TODO: redesign to validators
-        bool isMaxVal(); // TODO: redesign to validators
-        int getMaxVal(); // TODO: redesign to validators
-
-        CmdInputDef &addValidator(WsjcppValidatorStringBase *pValidatorStringBase);
+        WsjcppJsonRpc20ParamDef &addValidator(WsjcppValidatorStringBase *pValidatorString);
+        // WsjcppJsonRpc20ParamDef &addValidator(WsjcppValidatorIntegerBase *pValidatorInteger);
+        // WsjcppJsonRpc20ParamDef &addValidator(WsjcppValidatorObjectBase *pValidatorObject);
         
-        const std::vector<WsjcppValidatorStringBase *> &listOfValidators();
+        const std::vector<WsjcppValidatorStringBase *> &listOfStringValidators();
+        // const std::vector<WsjcppValidatorIntegerBase *> &listOfIntegerValidators();
+        // const std::vector<WsjcppValidatorObjectBase *> &listOfObjectValidators();
 
     private:
         std::string m_sType;
         std::string m_sName;
         std::string m_sRestrict;
         std::string m_sDescription;
-        int m_nMinVal;
-        bool m_bSettedMinVal;
-        int m_nMaxVal;
-        bool m_bSettedMaxVal;
 
         std::string CMD_INPUT_DEF_TYPE_INTEGER = "integer";
         std::string CMD_INPUT_DEF_TYPE_STRING = "string";
         std::string CMD_INPUT_DEF_TYPE_BOOL = "boolean";
-        std::string CMD_INPUT_DEF_TYPE_ANY = "any";
+        std::string CMD_INPUT_DEF_TYPE_OBJECT = "object";
 
         std::vector<WsjcppValidatorStringBase *> m_vValidatorsString;
+        // std::vector<WsjcppValidatorIntegerBase *> m_vValidatorsInteger;
+        // std::vector<WsjcppValidatorObjectBase *> m_vValidatorsObject;
 };
 
 // ---------------------------------------------------------------------
@@ -138,7 +165,7 @@ class ModelRequest {
         // QWebSocket *client();
         std::string getIpAddress();
         IWebSocketServer *server();
-        WsjcppUserSession *getUserSession();
+        WsjcppJsonRpc20UserSession *getUserSession();
         bool isAdmin();
         bool isUser();
         bool isUnauthorized();
@@ -162,7 +189,7 @@ class ModelRequest {
         std::string TAG;
         // QWebSocket *m_pClient;
         IWebSocketServer *m_pServer;
-        WsjcppUserSession *m_pWsjcppUserSession;
+        WsjcppJsonRpc20UserSession *m_pWsjcppJsonRpc20UserSession;
         nlohmann::json m_jsonRequest;
         std::string m_sMessageId;
         std::string m_sCommand;
@@ -187,7 +214,7 @@ class WsjcppJsonRpc20Base {
         bool accessAdmin();
         bool checkAccess(ModelRequest *pRequest);
 
-        virtual const std::vector<CmdInputDef> &inputs();
+        virtual const std::vector<WsjcppJsonRpc20ParamDef> &inputs();
         virtual void handle(ModelRequest *pRequest) = 0;
 
         // virtual void done(nlohmann::json jsonResponse);
@@ -200,20 +227,20 @@ class WsjcppJsonRpc20Base {
         void setActivatedFromVersion(const std::string &sActivatedFromVersion);
         void setDeprecatedFromVersion(const std::string &sDeprecatedFromVersion);
 
-        CmdInputDef &requireStringParam(const std::string &sName, const std::string &sDescription);
-        CmdInputDef &optionalStringParam(const std::string &sName, const std::string &sDescription);
-        CmdInputDef &requireIntegerParam(const std::string &sName, const std::string &sDescription);
-        CmdInputDef &optionalIntegerParam(const std::string &sName, const std::string &sDescription);
-        CmdInputDef &requireBooleanParam(const std::string &sName, const std::string &sDescription);
-        CmdInputDef &optionalBooleanParam(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef &requireStringParam(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef &optionalStringParam(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef &requireIntegerParam(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef &optionalIntegerParam(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef &requireBooleanParam(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef &optionalBooleanParam(const std::string &sName, const std::string &sDescription);
 
         std::string TAG;
         std::string m_sCmd;
         std::string m_sDescription;
 
     private:
-        std::vector<CmdInputDef> m_vInputs; // TODO redesign to map
-        // std::map<std::string, CmdInputDef*> *m_vCmdInputDefs;
+        std::vector<WsjcppJsonRpc20ParamDef> m_vInputs; // TODO redesign to map
+        // std::map<std::string, WsjcppJsonRpc20ParamDef*> *m_vWsjcppJsonRpc20ParamDefs;
         std::string m_sActivatedFromVersion;
         std::string m_sDeprecatedFromVersion;
         bool m_bAccessUnauthorized;

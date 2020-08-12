@@ -45,6 +45,8 @@ list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20.cpp")
 
 # unit-tests
 list (APPEND WSJCPP_INCLUDE_DIRS "src")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_json_rpc20_user_session.h")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_json_rpc20_user_session.cpp")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.user-custom.txt)
 
