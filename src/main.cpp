@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <wsjcpp_core.h>
+#include <wsjcpp_jsonrpc20.h>
 
 int main(int argc, const char* argv[]) {
     std::string TAG = "MAIN";
@@ -15,4 +16,5 @@ int main(int argc, const char* argv[]) {
     // TODO your code here
     return 0;
 }
+
 
