@@ -18,6 +18,7 @@ class WsjcppJsonRpc20Error {
         WsjcppJsonRpc20Error(int nErrorCode, const std::string &sErrorMessage);
         int getErrorCode();
         std::string getErrorMessage();
+        nlohmann::json toJson();
     private:
         std::string m_sErrorMessage;
         int m_nErrorCode;
@@ -159,10 +160,10 @@ class WsjcppJsonRpc20ParamDef {
 
 // ---------------------------------------------------------------------
 
-class ModelRequest {
+class WsjcppJsonRpc20Request {
     public:
-        ModelRequest(/*QWebSocket *pClient,*/ IWebSocketServer *pWebSocketServer, nlohmann::json &jsonRequest_);
-        // QWebSocket *client();
+        WsjcppJsonRpc20Request(void *pClient, IWebSocketServer *pWebSocketServer, nlohmann::json &jsonRequest_);
+        void *client();
         std::string getIpAddress();
         IWebSocketServer *server();
         WsjcppJsonRpc20UserSession *getUserSession();
@@ -187,7 +188,7 @@ class ModelRequest {
         // bool validateInputParameters(Error &error, CmdHandlerBase *pCmdHandler);
     private:
         std::string TAG;
-        // QWebSocket *m_pClient;
+        void *m_pClient;
         IWebSocketServer *m_pServer;
         WsjcppJsonRpc20UserSession *m_pWsjcppJsonRpc20UserSession;
         nlohmann::json m_jsonRequest;
@@ -204,18 +205,19 @@ class ModelRequest {
 class WsjcppJsonRpc20Base {
 
     public:
-        WsjcppJsonRpc20Base(const std::string &sCmd, const std::string &sDescription);
-        virtual std::string cmd();
-        virtual std::string description();
-        std::string activatedFromVersion();
-        std::string deprecatedFromVersion();
-        bool accessUnauthorized();
-        bool accessUser();
-        bool accessAdmin();
-        bool checkAccess(ModelRequest *pRequest);
+        WsjcppJsonRpc20Base(const std::string &sMethod, const std::string &sDescription);
+        virtual std::string getMethodName() const;
+        virtual std::string getDescription() const;
+        std::string getActivatedFromVersion() const;
+        std::string getDeprecatedFromVersion() const;
+        bool getAccessUnauthorized() const;
+        bool getAccessUser() const;
+        bool getAccessTester() const;
+        bool getAccessAdmin() const;
+        bool checkAccess(const WsjcppJsonRpc20Request *pRequest) const;
 
         virtual const std::vector<WsjcppJsonRpc20ParamDef> &inputs();
-        virtual void handle(ModelRequest *pRequest) = 0;
+        virtual void handle(WsjcppJsonRpc20Request *pRequest) = 0;
 
         // virtual void done(nlohmann::json jsonResponse);
         // virtual void fail(int nCode, const std::string &sErrorMessage);
@@ -223,6 +225,7 @@ class WsjcppJsonRpc20Base {
     protected:
         void setAccessUnauthorized(bool bAccess);
         void setAccessUser(bool bAccess);
+        void setAccessTester(bool bAccess);
         void setAccessAdmin(bool bAccess);
         void setActivatedFromVersion(const std::string &sActivatedFromVersion);
         void setDeprecatedFromVersion(const std::string &sDeprecatedFromVersion);
@@ -275,7 +278,7 @@ class WsjcppJsonRpc20ServerApi : public WsjcppJsonRpc20Base {
 
     public:
         WsjcppJsonRpc20ServerApi();
-        virtual void handle(ModelRequest *pRequest);
+        virtual void handle(WsjcppJsonRpc20Request *pRequest);
 };
 
 #endif // WSJCPP_JSONRPC20

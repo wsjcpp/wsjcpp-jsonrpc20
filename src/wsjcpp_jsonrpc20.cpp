@@ -1,6 +1,37 @@
 #include "wsjcpp_jsonrpc20.h"
 #include <wsjcpp_core.h>
 
+/*! 
+ * WsjcppJsonRpc20Error - 
+ * */
+
+WsjcppJsonRpc20Error::WsjcppJsonRpc20Error(int nErrorCode, const std::string &sErrorMessage) {
+    m_nErrorCode = nErrorCode;
+    m_sErrorMessage = sErrorMessage;
+}
+
+// ---------------------------------------------------------------------
+
+int WsjcppJsonRpc20Error::getErrorCode() {
+    return m_nErrorCode;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20Error::getErrorMessage() {
+    return m_sErrorMessage;
+}
+
+// ---------------------------------------------------------------------
+
+nlohmann::json WsjcppJsonRpc20Error::toJson() {
+    nlohmann::json jsonRet;
+    jsonRet["code"] = m_nErrorCode;
+    jsonRet["message"] = m_sErrorMessage;
+    return jsonRet;
+    // {"jsonrpc": "2.0", "error": {"code": -32600, "message": "Invalid Request."}, "id": null}
+}
+
 // ---------------------------------------------------------------------
 
 /*! 
