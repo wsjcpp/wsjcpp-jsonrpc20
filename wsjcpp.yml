@@ -1,5 +1,5 @@
 name: "wsjcpp-jsonrpc2"
-version: "v0.0.1"
+version: "v0.0.2"
 cmake_minimum_required: "3.0"
 cmake_cxx_standard: "11"
 description: "Implementation of JsonRPC 2.0"
@@ -23,7 +23,7 @@ dependencies:
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/nlohmann_json"
   - name: "wsjcpp-validators"
-    version: "v0.1.0"
+    version: "v0.1.2"
     url: "https://github.com/wsjcpp/wsjcpp-validators:master"
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_validators"
@@ -38,3 +38,5 @@ unit-tests:
   cases:
     - name: "JsonRpc20UserSession"
       description: "Test the user session object"
+    - name: "JsonRpc20ParamDef"
+      description: "Test"

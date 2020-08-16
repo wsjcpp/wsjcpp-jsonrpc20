@@ -89,7 +89,7 @@ class WsjcppJsonRpc20UserSession {
  * IWebSocketServer - 
  * */
 
-class IWebSocketServer {
+/*class IWebSocketServer {
     public:
         // virtual void sendMessage(QWebSocket *pClient, const nlohmann::json& jsonResponse) = 0;
         // virtual void sendMessageError(QWebSocket *pClient, const std::string &sCmd, const std::string & sM, WsjcppError error) = 0;
@@ -98,7 +98,7 @@ class IWebSocketServer {
         virtual int getConnectedUsers() = 0;
         // virtual void setWsjcppJsonRpc20UserSession(QWebSocket *pClient, WsjcppJsonRpc20UserSession *pUserSession) = 0; 
         // virtual WsjcppJsonRpc20UserSession *getWsjcppJsonRpc20UserSession(QWebSocket *pClient) = 0;
-};
+};*/
 
 /*! 
  * WsjcppJsonRpc20ParamDef - helper api for define input params and descrip it for docs.
@@ -113,7 +113,7 @@ class WsjcppJsonRpc20ParamDef {
         WsjcppJsonRpc20ParamDef & required();
         WsjcppJsonRpc20ParamDef & string_();
         WsjcppJsonRpc20ParamDef & integer_();
-        WsjcppJsonRpc20ParamDef & object_();
+        WsjcppJsonRpc20ParamDef & json_();
         WsjcppJsonRpc20ParamDef & bool_();
         WsjcppJsonRpc20ParamDef & description(const std::string &sDescription);
         nlohmann::json toJson();
@@ -132,34 +132,36 @@ class WsjcppJsonRpc20ParamDef {
         bool isInteger();
         bool isString();
         bool isBool();
-        bool isObject();
+        bool isJson();
 
         WsjcppJsonRpc20ParamDef &addValidator(WsjcppValidatorStringBase *pValidatorString);
-        // WsjcppJsonRpc20ParamDef &addValidator(WsjcppValidatorIntegerBase *pValidatorInteger);
-        // WsjcppJsonRpc20ParamDef &addValidator(WsjcppValidatorObjectBase *pValidatorObject);
+        WsjcppJsonRpc20ParamDef &addValidator(WsjcppValidatorIntegerBase *pValidatorInteger);
+        WsjcppJsonRpc20ParamDef &addValidator(WsjcppValidatorJsonBase *pValidatorJson);
         
         const std::vector<WsjcppValidatorStringBase *> &listOfStringValidators();
-        // const std::vector<WsjcppValidatorIntegerBase *> &listOfIntegerValidators();
-        // const std::vector<WsjcppValidatorObjectBase *> &listOfObjectValidators();
+        const std::vector<WsjcppValidatorIntegerBase *> &listOfIntegerValidators();
+        const std::vector<WsjcppValidatorJsonBase *> &listOfJsonValidators();
 
     private:
+        std::string TAG;
         std::string m_sType;
         std::string m_sName;
         std::string m_sRestrict;
         std::string m_sDescription;
 
-        std::string CMD_INPUT_DEF_TYPE_INTEGER = "integer";
-        std::string CMD_INPUT_DEF_TYPE_STRING = "string";
-        std::string CMD_INPUT_DEF_TYPE_BOOL = "boolean";
-        std::string CMD_INPUT_DEF_TYPE_OBJECT = "object";
+        std::string JSONRPC20_PARAM_DEF_TYPE_INTEGER = "integer";
+        std::string JSONRPC20_PARAM_DEF_TYPE_STRING = "string";
+        std::string JSONRPC20_PARAM_DEF_TYPE_BOOL = "boolean";
+        std::string JSONRPC20_PARAM_DEF_TYPE_JSON = "json";
 
         std::vector<WsjcppValidatorStringBase *> m_vValidatorsString;
-        // std::vector<WsjcppValidatorIntegerBase *> m_vValidatorsInteger;
-        // std::vector<WsjcppValidatorObjectBase *> m_vValidatorsObject;
+        std::vector<WsjcppValidatorIntegerBase *> m_vValidatorsInteger;
+        std::vector<WsjcppValidatorJsonBase *> m_vValidatorsJson;
 };
 
 // ---------------------------------------------------------------------
 
+/*
 class WsjcppJsonRpc20Request {
     public:
         WsjcppJsonRpc20Request(void *pClient, IWebSocketServer *pWebSocketServer, nlohmann::json &jsonRequest_);
@@ -195,13 +197,14 @@ class WsjcppJsonRpc20Request {
         std::string m_sMessageId;
         std::string m_sCommand;
 };
-
+*/
 // ---------------------------------------------------------------------
 
 /*!
  * Api handler Base
  * */
 
+/*
 class WsjcppJsonRpc20Base {
 
     public:
@@ -250,13 +253,13 @@ class WsjcppJsonRpc20Base {
         bool m_bAccessUser;
         bool m_bAccessAdmin;
 };
-
-extern std::map<std::string, WsjcppJsonRpc20Base*> *g_pWsjcppJsonRpc20BaseList;
+*/
+//extern std::map<std::string, WsjcppJsonRpc20Base*> *g_pWsjcppJsonRpc20BaseList;
 
 /*!
  * Global collection with handlers
  * */
-
+/*
 class WsjcppJsonRpc20 {
     public:
         static void initGlobalVariables();
@@ -267,18 +270,18 @@ class WsjcppJsonRpc20 {
 // RegistryWsjcppJsonRpc20
 #define REGISTRY_WSJCPP_JSONRPC20( classname ) \
     static classname * pRegistryWsjcppJsonRpc20 ## classname = new classname(); \
-
+*/
 // ---------------------------------------------------------------------
 
 /*!
  * This handler will be return list of handlers - publish api interfaces
  * */
-
+/*
 class WsjcppJsonRpc20ServerApi : public WsjcppJsonRpc20Base {
 
     public:
         WsjcppJsonRpc20ServerApi();
         virtual void handle(WsjcppJsonRpc20Request *pRequest);
 };
-
+*/
 #endif // WSJCPP_JSONRPC20

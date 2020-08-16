@@ -363,3 +363,238 @@ void WsjcppJsonRpc20UserSession::setSessionCustom(const nlohmann::json &jsonSess
 }
 
 // ---------------------------------------------------------------------
+// WsjcppJsonRpc20ParamDef
+
+WsjcppJsonRpc20ParamDef::WsjcppJsonRpc20ParamDef(const std::string &sName, const std::string &sDescription) 
+    : WsjcppJsonRpc20ParamDef()
+{
+    m_sName = sName;
+    m_sDescription = sDescription;
+    
+    if (sName.length() < 1) {
+        WsjcppLog::throw_err(TAG, "Name must be define");
+    }
+    for (int i = 0; i < sName.length(); i++) {
+        char c =  sName[i];
+        if ((c < 'a' || c > 'z') && (c < '0' || c > '9') && c != '_') {
+            std::string sError = "Not allowed character in name of param: '";
+            sError += c;
+            sError += "', character must be in range 'a-z0-9_'";
+            WsjcppLog::throw_err(TAG, sError);
+        }
+        
+    }
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef::WsjcppJsonRpc20ParamDef() {
+    TAG = "WsjcppJsonRpc20ParamDef";
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::optional() {
+    m_sRestrict = "optional";
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::required() {
+    m_sRestrict = "required";
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::string_() {
+    if (m_sType != "") {
+        WsjcppLog::throw_err(TAG, "Type already defined like '" + m_sType + "', but you want change this to 'string'");
+    }
+    m_sType = std::string(JSONRPC20_PARAM_DEF_TYPE_STRING);
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::integer_() {
+    if (m_sType != "") {
+        WsjcppLog::throw_err(TAG, "Type already defined like '" + m_sType + "', but you want change this to 'integer'");
+    }
+    m_sType = JSONRPC20_PARAM_DEF_TYPE_INTEGER;
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::bool_() {
+    if (m_sType != "") {
+        WsjcppLog::throw_err(TAG, "Type already defined like '" + m_sType + "', but you want change this to 'bool'");
+    }
+    m_sType = std::string(JSONRPC20_PARAM_DEF_TYPE_BOOL);
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::json_() {
+    if (m_sType != "") {
+        WsjcppLog::throw_err(TAG, "Type already defined like '" + m_sType + "', but you want change this to 'json'");
+    }
+    m_sType = std::string(JSONRPC20_PARAM_DEF_TYPE_JSON);
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::description(const std::string& s) {
+    m_sDescription = s;
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+nlohmann::json WsjcppJsonRpc20ParamDef::toJson() {
+    nlohmann::json obj;
+    obj["name"] = m_sName;
+    obj["type"] = m_sType;
+    obj["restrict"] = m_sRestrict;
+    obj["description"] = m_sDescription;
+    // TODO validator description
+    return obj;
+}
+
+// ---------------------------------------------------------------------
+
+const std::string &WsjcppJsonRpc20ParamDef::getType() {
+    return m_sType;
+}
+
+// ---------------------------------------------------------------------
+
+const std::string &WsjcppJsonRpc20ParamDef::getType() const {
+    return m_sType;
+}
+
+// ---------------------------------------------------------------------
+
+const std::string &WsjcppJsonRpc20ParamDef::getName() {
+    return m_sName;
+}
+
+// ---------------------------------------------------------------------
+
+const std::string &WsjcppJsonRpc20ParamDef::getName() const {
+    return m_sName;
+}
+
+// ---------------------------------------------------------------------
+
+const std::string &WsjcppJsonRpc20ParamDef::getRestrict() {
+    return m_sRestrict;
+}
+
+// ---------------------------------------------------------------------
+
+const std::string &WsjcppJsonRpc20ParamDef::getRestrict() const {
+    return m_sRestrict;
+}
+
+// ---------------------------------------------------------------------
+
+const std::string &WsjcppJsonRpc20ParamDef::getDescription() {
+    return m_sDescription;
+}
+
+// ---------------------------------------------------------------------
+
+const std::string &WsjcppJsonRpc20ParamDef::getDescription() const {
+    return m_sDescription;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ParamDef::isRequired() {
+    return m_sRestrict == "required";
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ParamDef::isOptional() {
+    return m_sRestrict == "optional";
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ParamDef::isInteger() {
+    return m_sType == JSONRPC20_PARAM_DEF_TYPE_INTEGER;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ParamDef::isString() {
+    return m_sType == JSONRPC20_PARAM_DEF_TYPE_STRING;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ParamDef::isBool() {
+    return m_sType == JSONRPC20_PARAM_DEF_TYPE_BOOL;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ParamDef::isJson() {
+    return m_sType == JSONRPC20_PARAM_DEF_TYPE_JSON;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20ParamDef::addValidator(WsjcppValidatorStringBase *pValidatorString) {
+    if (!isString()) {
+        WsjcppLog::throw_err(TAG, "addValidator(), expected string data type");
+    }
+    m_vValidatorsString.push_back(pValidatorString);
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20ParamDef::addValidator(WsjcppValidatorIntegerBase *pValidatorInteger) {
+    if (!isInteger()) {
+        WsjcppLog::throw_err(TAG, "addValidator(), expected integer data type");
+    }
+    m_vValidatorsInteger.push_back(pValidatorInteger);
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20ParamDef::addValidator(WsjcppValidatorJsonBase *pValidatorJson) {
+    if (!isJson()) {
+        WsjcppLog::throw_err(TAG, "addValidator(), expected json data type");
+    }
+    m_vValidatorsJson.push_back(pValidatorJson);
+    return *this;
+}
+
+// ---------------------------------------------------------------------
+
+const std::vector<WsjcppValidatorStringBase *> &WsjcppJsonRpc20ParamDef::listOfStringValidators() {
+    return m_vValidatorsString;
+}
+
+// ---------------------------------------------------------------------
+
+const std::vector<WsjcppValidatorIntegerBase *> &WsjcppJsonRpc20ParamDef::listOfIntegerValidators() {
+    return m_vValidatorsInteger;
+}
+
+// ---------------------------------------------------------------------
+
+const std::vector<WsjcppValidatorJsonBase *> &WsjcppJsonRpc20ParamDef::listOfJsonValidators() {
+    return m_vValidatorsJson;
+}
+
+// ---------------------------------------------------------------------
