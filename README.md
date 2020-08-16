@@ -1,5 +1,8 @@
 # wsjcpp-jsonrpc2
-Implementation for JsonRPC 2.0
+
+[![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-jsonrpc20.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-jsonrpc20)
+
+C++ Implementation for JsonRPC 2.0
 
 ## Features
 
