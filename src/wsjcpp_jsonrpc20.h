@@ -10,7 +10,7 @@
 class WsjcppJsonRpc20Error;
 class WsjcppJsonRpc20UserSession;
 class WsjcppJsonRpc20ParamDef;
-class WsjcppJsonRpc20WebSocket;
+class WsjcppJsonRpc20WebSocketClient;
 class WsjcppJsonRpc20WebSocketServer;
 class WsjcppJsonRpc20ParamDef;
 class WsjcppJsonRpc20Request;
@@ -94,7 +94,7 @@ class WsjcppJsonRpc20UserSession {
 };
 
 // ---------------------------------------------------------------------
-// WsjcppJsonRpc20WebSocket
+// WsjcppJsonRpc20WebSocketClient
 
 class WsjcppJsonRpc20WebSocketClient {
     public:
@@ -102,7 +102,13 @@ class WsjcppJsonRpc20WebSocketClient {
         void setUserSession(WsjcppJsonRpc20UserSession *pUserSession);
         WsjcppJsonRpc20UserSession *getUserSession();
         void unsetUserSession();
-        
+        virtual void onDisconnected() = 0;
+        virtual std::string getPeerIpAddress() = 0;
+        virtual int getPeerPort() = 0;
+        virtual std::string getRequestUrl() = 0;
+
+        virtual void sendTextMessage(const std::string &sTextMessage) = 0;
+
     protected:
         std::string TAG;
 
@@ -112,26 +118,27 @@ class WsjcppJsonRpc20WebSocketClient {
 
 // ---------------------------------------------------------------------
 // WsjcppJsonRpc20WebSocketServer
-/*
+
 class WsjcppJsonRpc20WebSocketServer {
     public:
-        virtual void sendMessage(
-            WsjcppJsonRpc20WebSocket *pClient,
-            const nlohmann::json& jsonResponse
-        ) = 0;
-        virtual void sendMessageError(
-            WsjcppJsonRpc20WebSocket *pClient,
-            const std::string &sCmd,
-            const std::string & sM,
-            WsjcppJsonRpc20Error error
-        ) = 0;
-        virtual void sendToAll(const nlohmann::json& jsonMessage) = 0;
-        virtual void sendToOne(WsjcppJsonRpc20WebSocket *pClient, const nlohmann::json &jsonMessage) = 0;
-        virtual int getConnectedUsers() = 0;
-        virtual void setWsjcppJsonRpc20UserSession(WsjcppJsonRpc20WebSocket *pClient, WsjcppJsonRpc20UserSession *pUserSession) = 0; 
-        virtual WsjcppJsonRpc20UserSession *getWsjcppJsonRpc20UserSession(WsjcppJsonRpc20WebSocket *pClient) = 0;
+        WsjcppJsonRpc20WebSocketServer();
+
+
+        void onWebSocketConnected(void *pClient, WsjcppJsonRpc20WebSocketClient *pWebSocketClient);
+        void onWebSocketDisconnected(void *pClient);
+        int getConnectedClients();
+        // TODO int getConnectedUsers();
+
+        WsjcppJsonRpc20WebSocketClient *findWebSocketClient(void *pClient);
+        void sendMessageToAll(const nlohmann::json& jsonMessage);
+        void sendMessageToOne(WsjcppJsonRpc20WebSocketClient *pClient, const nlohmann::json &jsonMessage);
+
+    protected:
+        std::string TAG;
+
+    private:
+        std::map<void *, WsjcppJsonRpc20WebSocketClient *> m_mapClients;
 };
-*/
 
 /*! 
  * WsjcppJsonRpc20ParamDef - helper api for define input params and descrip it for docs.
@@ -221,7 +228,6 @@ class WsjcppJsonRpc20Request {
         std::string command();
         bool hasCommand();
         void sendMessageError(const std::string &cmd, WsjcppJsonRpc20Error error);
-        void sendMessageSuccess(const std::string &cmd, nlohmann::json& jsonResponse);
         void sendResponse(nlohmann::json& jsonResult);
 
         // bool validateInputParameters(Error &error, CmdHandlerBase *pCmdHandler);
