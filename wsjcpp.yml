@@ -34,6 +34,12 @@ distribution:
   - source-file: "src/wsjcpp_jsonrpc20.cpp"
     target-file: "wsjcpp_jsonrpc20.cpp"
     type: "source-code"
+  - source-file: "src/wsjcpp_jsonrpc20_export_cli_python.h"
+    target-file: "wsjcpp_jsonrpc20_export_cli_python.h"
+    type: "source-code"
+  - source-file: "src/wsjcpp_jsonrpc20_export_cli_python.cpp"
+    target-file: "wsjcpp_jsonrpc20_export_cli_python.cpp"
+    type: "source-code"
 unit-tests:
   cases:
     - name: "JsonRpc20UserSession"
