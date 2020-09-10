@@ -1,4 +1,4 @@
-name: "wsjcpp-jsonrpc2"
+name: "wsjcpp-jsonrpc20"
 version: "v0.0.2"
 cmake_minimum_required: "3.0"
 cmake_cxx_standard: "11"
@@ -11,6 +11,7 @@ origins:
     type: "package-registry"
 keywords:
   - "c++"
+
 dependencies:
   - name: "wsjcpp-core"
     version: "v0.1.7"
@@ -27,6 +28,7 @@ dependencies:
     url: "https://github.com/wsjcpp/wsjcpp-validators:master"
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_validators"
+
 distribution:
   - source-file: "src/wsjcpp_jsonrpc20.h"
     target-file: "wsjcpp_jsonrpc20.h"
@@ -40,6 +42,10 @@ distribution:
   - source-file: "src/wsjcpp_jsonrpc20_export_cli_python.cpp"
     target-file: "wsjcpp_jsonrpc20_export_cli_python.cpp"
     type: "source-code"
+  - source-file: "scripts.wsjcpp/generate.WsjcppJsonRpc20Handler"
+    target-file: "generate.WsjcppJsonRpc20Handler"
+    type: "safe-scripting-generate"
+
 unit-tests:
   cases:
     - name: "JsonRpc20UserSession"

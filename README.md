@@ -1,6 +1,6 @@
-# wsjcpp-jsonrpc2
+# wsjcpp-jsonrpc20
 
-[![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-jsonrpc2.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-jsonrpc2)
+[![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-jsonrpc20.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-jsonrpc20)
 
 C++ Implementation for JsonRPC 2.0
 
@@ -10,6 +10,25 @@ C++ Implementation for JsonRPC 2.0
 * Including system of define validators
 * 
 
+
+## Integration
+
+### via wsjcpp
+
+```
+$ wsjcpp install https://github.com/wsjcpp/wsjcpp-jsonrpc20:master
+```
+
+### Include files
+
+* src.wsjcpp/nlohmann_json/json.hpp
+* src.wsjcpp/wsjcpp_core.h
+* src.wsjcpp/wsjcpp_validators/wsjcpp_validators.h
+* src.wsjcpp/wsjcpp_validators/wsjcpp_validators.cpp
+* src/wsjcpp_jsonrpc20.h
+* src/wsjcpp_jsonrpc20.cpp
+* src/wsjcpp_jsonrpc20_export_cli_python.h
+* src/wsjcpp_jsonrpc20_export_cli_python.cpp
 
 ## Example 
 

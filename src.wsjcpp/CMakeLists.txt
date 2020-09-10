@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 add_definitions(-DWSJCPP_APP_VERSION="v0.0.2")
-add_definitions(-DWSJCPP_APP_NAME="wsjcpp-jsonrpc2")
+add_definitions(-DWSJCPP_APP_NAME="wsjcpp-jsonrpc20")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOSX TRUE)

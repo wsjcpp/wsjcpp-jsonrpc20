@@ -13,6 +13,9 @@ int main(int argc, const char* argv[]) {
     }
     WsjcppLog::setPrefixLogFile("wsjcpp");
     WsjcppLog::setLogDirectory(".logs");
+
+
+    
     // TODO your code here
     return 0;
 }
