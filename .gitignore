@@ -1,4 +1,8 @@
 .wsjcpp/*
+.logs/
 tmp/*
+example-of-exported/py3/dist/*
+example-of-exported/py3/*.egg-info
+example-of-exported/py3/build
 wsjcpp-jsonrpc2
 wsjcpp-jsonrpc20

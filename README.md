@@ -2,14 +2,12 @@
 
 [![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-jsonrpc20.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-jsonrpc20)
 
-C++ Implementation for JsonRPC 2.0
+C++ Implementation for JsonRPC 2.0 (oriented on websockets)
 
 ## Features
 
 * Collect all handlers for jsonrpc20
 * Including system of define validators
-* 
-
 
 ## Integration
 
@@ -32,7 +30,7 @@ $ wsjcpp install https://github.com/wsjcpp/wsjcpp-jsonrpc20:master
 
 ## Prepare handler
 
-easy way:
+### via wsjcpp
 
 ```
 $ wsjcpp generate WsjcppJsonRpc20Handler GameCreate
@@ -56,43 +54,117 @@ list (APPEND WSJCPP_SOURCES "./src/wsjcpp_json_rpc20_handler_game_create.cpp")
 They will contains class `WsjcppJsonRpc20HandlerGameCreate` with method `game_create`
 
 
-## Example 
+### code sample
+
+File `./src/wsjcpp_json_rpc20_handler_game_create.h`:
+
+``` cpp
+#ifndef WSJCPP_JSON_RPC20_HANDLER_GAME_CREATE_H
+#define WSJCPP_JSON_RPC20_HANDLER_GAME_CREATE_H
+
+#include <wsjcpp_jsonrpc20.h>
+
+class WsjcppJsonRpc20HandlerGameCreate : public WsjcppJsonRpc20HandlerBase {
+    public:
+        WsjcppJsonRpc20HandlerGameCreate();
+        virtual void handle(WsjcppJsonRpc20Request *pRequest) override;
+};
+
+#endif // WSJCPP_JSON_RPC20_HANDLER_GAME_CREATE_H
+```
+
+File `./src/wsjcpp_json_rpc20_handler_game_create.cpp`:
+
+``` cpp
+#include "wsjcpp_json_rpc20_handler_game_create.h"
+#include <wsjcpp_core.h>
+#include <wsjcpp_jsonrpc20.h>
+
+// ---------------------------------------------------------------------
+// WsjcppJsonRpc20HandlerGameCreate
+
+WsjcppJsonRpc20HandlerGameCreate::WsjcppJsonRpc20HandlerGameCreate() 
+: WsjcppJsonRpc20HandlerBase("game_create", "TODO description") {
+    TAG = "WsjcppJsonRpc20HandlerGameCreate";
+    // setAccessUnauthorized(true);
+    // setAccessUser(true);
+    // setAccessTester(true);
+    // setAccessAdmin(true);
+    // void setActivatedFromVersion("v0.0.1"); // TODO authomatic set WSJCPP_APP_VERSION
+    // void setDeprecatedFromVersion("");
+
+    // description of input params
+    // requireStringParam("uuid", "object uuid")
+    //    .addValidator(new WsjcppValidatorUUID());
+    // optionalStringParam("name", "Name of object")
+    //    .addValidator(new WsjcppValidatorStringLength(3,10));
+
+    // requireIntegerParam("cost", "Name of object")
+    //    .addValidator(new WsjcppValidatorIntegerMinValue(3))
+    //    .addValidator(new WsjcppValidatorIntegerMaxValue(1000));
+    // optionalIntegerParam("age", "Name of object")
+    //    .addValidator(new WsjcppValidatorIntegerMinValue(0))
+
+    // requireBooleanParam("public", "True if object is public");
+    // optionalBooleanParam("activated", "If object can handle");
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20HandlerGameCreate::handle(WsjcppJsonRpc20Request *pRequest) {
+    WsjcppLog::err(TAG, "Not implemented");
+    // TODO
+    pRequest->fail(WsjcppJsonRpc20Error(501, "NOT_IMPLEMENTED"));
+}
+```
+
+
+## Automaticly generate client libraries on different languages
+
+### Generate Python Library + PyPi Package
 
 ``` cpp
 
-// method: order_remove or remove_order
+#include <wsjcpp_jsonrpc20_export_cli_python.h>
+#include <iostream>
+... 
+void main() {
+    std::string sExportDir = "./example-of-exported-client-libraries";
 
-MethodJsonRpc20_OrderRemove::MethodJsonRpc20_OrderRemove()
-    : WsjcppJsonRpc20Base({"order_remove", "remove_order"}, "Remove order by id") {
-    
-    // restriction for different roles
-    setAccessUnauthorized(false); // this define "false" says that UserSession will be not nullptr
-    setAccessUser(true);
-    setAccessAdmin(true);
+    WsjcppJsonRpc20ExportCliPython exportCliPython(
+        "./example-of-exported/py3",
+        "libwsjcppjson20client"
+    );
+    exportCliPython.setAuthorName("Evgenii Sopov");
+    exportCliPython.setAuthorEmail("mrseakg@gmail.com");
+    exportCliPython.setAppName(std::string(WSJCPP_APP_NAME));
+    exportCliPython.setAppVersion(std::string(WSJCPP_APP_VERSION));
+    exportCliPython.setUrl("https://github.com/user/repo");
+    exportCliPython.setDownloadUrl("https://github.com/user/repo/archive/" + std::string(WSJCPP_APP_NAME) + ".tar.gz");
+    exportCliPython.setKeywords({std::string(WSJCPP_APP_NAME), "wsjcpp", "wsjcpp-jsonrpc20", "example-python-client"});
 
-    // just information for documentation
-    setActivatedFromVersion("0.2.32");
-
-    // validation and description input fields
-    requireIntegerParam("id", "Id of user");
-}
-
-void MethodJsonRpc20_OrderRemove::handle(ModelRequest *pRequest) {
-    WsjcppUserSession *pUserSession = pRequest->getUserSession();
-    
-    int nId = pRequest->getInputInteger("id", -1);
-
-    // find id in database if not then return NOT_FOUND
-
-    if (nId == -1) {
-        pRequest->fail(404, "NOT_FOUND");
-        return;
+    if (!exportCliPython.doExportLib()) {
+        std::cout << "Failed!" << std::endl;
+    } else {
+        std::cout << "Success!" << std::endl;
     }
-
-    // do remove order here
-
-    nlohmann::json jsonResponse;
-    pRequest->done(jsonResponse);
 }
+```
+
+Usefull (official docs): https://packaging.python.org/tutorials/packaging-projects/
+
+
+In next step you need:
 
 ```
+$ cd ./example-of-exported/py3
+$ python3 setup.py sdist bdist_wheel
+... here will prepared dist/* directory
+$ twine check dist/*
+Checking dist/libwsjcppjson20client-0.0.2-py3-none-any.whl: PASSED
+Checking dist/libwsjcppjson20client-0.0.2.tar.gz: PASSED
+$ python3 -m pip install --user --upgrade twine
+$ python3 -m twine upload dist/*
+... here you need registered account on pypi
+```
+

@@ -1,11 +1,12 @@
 #include "wsjcpp_jsonrpc20_export_cli_python.h"
 
-#include <iostream>
-#include <iomanip>
-#include <algorithm>
+#include <wsjcpp_core.h>
 #include <wsjcpp_jsonrpc20.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <iostream>
+// #include <iomanip>
+#include <algorithm>
+// #include <sys/types.h>
+// #include <sys/stat.h>
 #include <memory>
 #include <iostream>
 #include <fstream>
@@ -16,7 +17,6 @@
 // ---------------------------------------------------------------------
 
 class PyCodeLine{
-    
     PyCodeLine *m_pParent;
     std::string m_sLine;
     std::vector<PyCodeLine *> m_vLines;
@@ -118,123 +118,235 @@ public:
     };
 };
 
+
 // ---------------------------------------------------------------------
+// WsjcppJsonRpc20ExportCliPython
 
-void WsjcppJsonRpc20ExportCliPython::exportLib() {
-
-    exportPrepareDirs();
-    export__init__py();
-    exportSetupPy();
-    exportAPImd();
+WsjcppJsonRpc20ExportCliPython::WsjcppJsonRpc20ExportCliPython(
+    const std::string &sExportDir,
+    const std::string &sPackageName
+) {
+    TAG = "WsjcppJsonRpc20ExportCliPython";
+    m_sExportDir = WsjcppCore::doNormalizePath(sExportDir);
+    m_sPackageName = sPackageName;
+    m_sAuthorName = "Unknown";
+    m_sAuthorEmail = "unknown";
+    m_sAppName = "unknown";
+    m_sAppVersion = "unknown";
+    m_sClassName = "SomeClient";
+    m_sUrl = "none";
 }
 
 // ---------------------------------------------------------------------
 
-void WsjcppJsonRpc20ExportCliPython::exportPrepareDirs() {
-    int status;
-    std::cout << " * mkdir libfreehackquest-client-py" << std::endl;
-    status = mkdir("libfreehackquest-client-py", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    std::cout << "\t> OK" << std::endl;
-
-    std::cout << " * mkdir libfreehackquest-client-py/libfreehackquestclient" << std::endl;
-    status = mkdir("libfreehackquest-client-py/libfreehackquestclient", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    std::cout << "\t> OK" << std::endl;
+void WsjcppJsonRpc20ExportCliPython::setAuthorName(const std::string &sAuthorName) {
+    m_sAuthorName = sAuthorName;
 }
 
 // ---------------------------------------------------------------------
 
-void WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
+void WsjcppJsonRpc20ExportCliPython::setAuthorEmail(const std::string &sAuthorEmail) {
+    m_sAuthorEmail = sAuthorEmail;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliPython::setAppName(const std::string &sAppName) {
+    m_sAppName = sAppName;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliPython::setAppVersion(const std::string &sAppVersion) {
+    // https://www.python.org/dev/peps/pep-0440/
+    // [N!]N(.N)*[{a|b|rc}N][.postN][.devN]
+    // TODO regexp 
+    m_sAppVersion = sAppVersion;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliPython::setClassName(const std::string &sClassName) {
+    m_sClassName = sClassName;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliPython::setUrl(const std::string &sUrl) {
+    m_sUrl = sUrl;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliPython::setDownloadUrl(const std::string &sDownloadUrl) {
+    m_sDownloadUrl = sDownloadUrl;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliPython::setKeywords(const std::vector<std::string> &vKeywords) {
+    m_vKeywords = vKeywords;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ExportCliPython::doExportLib() {
+    if (!this->exportPrepareDirs()) {
+        return false;
+    }
+
+    if (!this->prepareReadmeMdIfNeed()) {
+        return false;
+    }
+
+    if (!this->exportSetupPy()) {
+        return false;
+    }
+
+    if (!this->exportAPImd()) {
+        return false;
+    }
+
+    // export__init__py();
+    // 
+    return true;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ExportCliPython::exportPrepareDirs() {
+    std::vector<std::string> vCreateDirs;
+    std::vector<std::string> vSplited = WsjcppCore::split(m_sExportDir, "/");
+    std::string sExportDir = "";
+    for (int i = 0; i < vSplited.size(); i++) {
+        WsjcppLog::info(TAG, "vSplited: " + vSplited[i]);
+
+        if (i > 0) {
+            sExportDir += "/";
+        }
+        sExportDir += vSplited[i];
+        sExportDir = WsjcppCore::doNormalizePath(sExportDir);
+        vCreateDirs.push_back(sExportDir);
+    }
+    sExportDir = WsjcppCore::doNormalizePath(sExportDir + "/" + m_sPackageName);
+    vCreateDirs.push_back(sExportDir);
+
+    for (int i = 0; i < vCreateDirs.size(); i++) {
+        std::string sDir = vCreateDirs[i];
+        WsjcppLog::info(TAG, "Info: " + sDir);
+        
+        if (!WsjcppCore::dirExists(sDir)) {
+            if (!WsjcppCore::makeDir(sDir)) {
+                WsjcppLog::err(TAG, "Could not create directory: " + sDir);
+                return false;
+            } else {
+                WsjcppLog::ok(TAG, "Created directory: " + sDir);
+            }
+        }
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ExportCliPython::prepareReadmeMdIfNeed() {
+    std::string sReadmeMd = m_sExportDir + "/README.md";
+    if (!WsjcppCore::fileExists(sReadmeMd)) {
+        std::string sContentReadme = 
+            "#" + m_sPackageName + "\n\n"
+            + m_sClassName + " Python Library for " + m_sAppName + "\n\n"
+            + "## Install \n\n"
+            + "```\n"
+            + "$ pip3 install " + m_sPackageName + " --upgrade\n"
+            + "```\n\n"
+            + "## Example code\n\n"
+            + "```\n"
+            + "#!/usr/bin/env python3\n"
+            + "# -*- coding: utf-8 -*-\n"
+            + "from " + m_sPackageName + " import " + m_sClassName + "\n\n"
+            + "client = " + m_sClassName + "(\"ws://host/ws-api/\")\n\n"
+            + "resp = client.server_api({})\n\n"
+            + "print(resp)\n"
+            + "```\n\n"
+            + "Full description API here: [API.md](./API.md)";
+        WsjcppCore::writeFile(sReadmeMd, sContentReadme);
+        WsjcppLog::warn(TAG, "Generated once, so please read and update if need: '" + sReadmeMd + "'");
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
     std::ofstream setupPy;
-    std::cout << " * write code to libfreehackquest-client-py/libfreehackquestclient/setup.py " << std::endl;
-    setupPy.open ("libfreehackquest-client-py/setup.py");
+    std::string sFilename = m_sExportDir + "/setup.py";
+    WsjcppLog::info(TAG, "Prepare setup.py " + sFilename);
+    
+    // https://packaging.python.org/tutorials/packaging-projects/
+    std::string sContentSetupPy = 
+        "import setuptools\n"
+        "\n"
+        "with open('README.md', 'r') as fh:\n"
+        "    long_description = fh.read()\n"
+        "\n"
+        "setuptools.setup(\n"
+        "    name='" + m_sPackageName + "',\n"
+        "    version='" + m_sAppVersion + "',\n"
+        "    packages=['" + m_sPackageName + "'],\n"
+        "    install_requires=['websocket-client>=0.56.0', 'requests>=2.21.0'],\n"
+        "    keywords=['" + WsjcppCore::join(m_vKeywords, "', '") + "'],\n"
+        "    author='" + m_sAuthorName + "',\n"
+        "    author_email='" + m_sAuthorEmail + "',\n"
+        "    description='" + m_sClassName + " Python Library for " + m_sAppName + "',\n"
+        "    long_description=long_description,\n"
+        "    long_description_content_type='text/markdown',\n"
+        "    url='" + m_sUrl + "',\n"
+        "    license='MIT',\n"
+        "    download_url='" + m_sDownloadUrl + "',\n"
+        "    classifiers=[\n"
+        "         'Development Status :: 5 - Production/Stable',\n" //  # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
+        "         'License :: OSI Approved :: MIT License',\n"
+        "         'Operating System :: OS Independent',\n"
+        "         'Programming Language :: Python :: 3',\n"
+        "         'Programming Language :: Python :: 3.4',\n"
+        "         'Programming Language :: Python :: 3.5',\n"
+        "         'Programming Language :: Python :: 3.6',\n"
+        "         'Programming Language :: Python :: 3.7',\n"
+        "    ],\n"
+        "    python_requires='>=3.6',\n"
+        ")\n"
+    ;
 
-    std::time_t t = std::time(nullptr);
-    std::stringstream buffer;
-    buffer << std::put_time(std::gmtime(&t), "%d %b %Y");
+    WsjcppCore::writeFile(sFilename, sContentSetupPy);
 
-    PyCodeBuilder builder;
-    builder
-    .add("import setuptools")
-    .add("")
-    .sub("with open('README.md', 'r') as fh:")
-        .add("long_description = fh.read()")
-        .end()
-    .add("")
-    .sub("setuptools.setup(")
-        .add({
-            "name='libfreehackquestclient',",
-            "version='" + std::string(WSJCPP_APP_VERSION) + "',",
-            "install_requires=['websocket-client>=0.56.0', 'requests>=2.21.0'],",
-            "keywords=['ctf', 'fhq', 'fhq-server', 'libfreehackquest-client', 'jeopardy', 'freehackquest'],",
-            "author='FreeHackQuest Team',",
-            "author_email='freehackquest@gmail.com',",
-            "description='FreeHackQuest Python Client Library for fhq-server',",
-            "long_description=long_description,",
-            "long_description_content_type='text/markdown',",
-            "url='https://github.com/freehackquest/libfreehackquest-client-py',",
-            "packages=['libfreehackquestclient'],",
-        })
-        .sub("classifiers=(")
-            .add("'Programming Language :: Python :: 3',")
-            .add("'License :: OSI Approved :: Apache Software License',")
-            .add("'Operating System :: OS Independent',")
-            .end()
-        .add("),")
-        .add("python_requires='>=3.6',")
-        .end()
-    .add(")");
-    builder.print(setupPy);
-    setupPy.close();
-    std::cout << "\t> OK" << std::endl;
-
+    WsjcppLog::ok(TAG, "Done: setup.py");
+    return true;
 }
 
 // ---------------------------------------------------------------------
 
-void WsjcppJsonRpc20ExportCliPython::exportAPImd() {
+bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
     
     std::ofstream apimd;
-    std::cout << " * write file to libfreehackquest-client-py/API.md" << std::endl;
-    apimd.open("libfreehackquest-client-py/API.md");
+    std::string sFilename = m_sExportDir + "/API.md";
+    WsjcppLog::info(TAG, "Prepare API.md " + sFilename);
 
-    std::time_t t = std::time(nullptr);
-    std::stringstream buffer;
-    buffer << std::put_time(std::gmtime(&t), "%d %b %Y");
+    apimd.open(sFilename);
 
-    apimd << "# FreeHackQuestClient Python\n\n";
-    apimd << " Automatically generated by fhq-server. \n";
-    apimd << " * Version: " << WSJCPP_APP_VERSION << "\n";
-    apimd << " * Date: " << buffer.str() << "\n\n";
-    apimd << " Example connect/disconnect:\n"
+    long nSec = WsjcppCore::currentTime_seconds();
+
+    apimd << "# " + m_sClassName + " Python Library \n\n";
+    apimd << "Automatically generated by " << m_sAppName << ". \n";
+    apimd << "* Version: " << m_sAppVersion << "\n";
+    apimd << "* Date: " << WsjcppCore::formatTimeForWeb(nSec) << "\n\n";
+    apimd << "Example connect/disconnect:\n"
         << "```\n"
-        << "from libfreehackquestclient import FreeHackQuestClient \n\n"
-        << "cli = libfreehackquestclient.FreeHackQuestClient('ws://localhost:1234')\n"
+        << "from " + m_sPackageName + " import " + m_sClassName + " \n\n"
+        << "client = " + m_sClassName + "('ws://host:1234')\n"
         << " ... \n"
-        << "cli.close()\n"
+        << "client.close()\n"
         << "```\n";
     apimd << "\n";
-
-/*
-<details>
-  <summary>addhint</summary>
-  
-  Method add hint to quest
-
-Access: unauthorized - **no**,  user - **no**,  admin - **yes**
-
- #### Input params 
-
- * questid - integer, required; quest id
- * hint - string, required; hint text
-
-
- #### example call method 
-
- ```response = fhq.addhint({"questid": 0, "hint": ""})```
- 
-</details>
-
-*/
 
     std::map<std::string, WsjcppJsonRpc20HandlerBase*>::iterator it = g_pWsjcppJsonRpc20HandlerList->begin();
     for (; it!=g_pWsjcppJsonRpc20HandlerList->end(); ++it) {
@@ -267,51 +379,52 @@ Access: unauthorized - **no**,  user - **no**,  admin - **yes**
 
             apimd << " * " << inDef.getName() << " - " << inDef.getType() << ", " << inDef.getRestrict() << "; " << inDef.getDescription() << "\n";
 
-            if (pythonTemplate != "") {
-                pythonTemplate += ",\n";
-            }
+            pythonTemplate += "    " + inDef.getName() + "=";
             if (inDef.isInteger()) {
-                int nVal = 0;
-                if (inDef.getName() == "onpage") {
-                    nVal = 10;
-                }
-                pythonTemplate += "    \"" + inDef.getName() + "\": " + std::to_string(nVal);
-            } else {
-                pythonTemplate += "    \"" + inDef.getName() + "\": \"\"";
+                pythonTemplate += "0";
+            } else if (inDef.isString()) {
+                pythonTemplate += "\"\"";
+            } else if (inDef.isBool()) {
+                pythonTemplate += "False";
+            } else if (inDef.isJson()) {
+                pythonTemplate += "{}";
+            }
+
+            if (i != vVin.size()-1) {
+                pythonTemplate += ",\n";
             }
         }
         apimd 
             << "\n\n"
-            << " #### example call method \n\n ```\nresponse = fhq." + sCmd + "({\n" + pythonTemplate + "\n})\n```"
+            << " #### example call method \n\n ```\nresponse = client." + sCmd + "(\n" + pythonTemplate + "\n)\n```"
             << "\n\n</details>"
             << "\n\n";
-        
     }
 
     apimd.close();
-    std::cout << "\t> OK" << std::endl;
+    WsjcppLog::ok(TAG, "Done: " + sFilename);
+    return true;
 }
 
 // ---------------------------------------------------------------------
 
-void WsjcppJsonRpc20ExportCliPython::export__init__py() {
+bool WsjcppJsonRpc20ExportCliPython::export__init__py() {
+    std::string sFilename = m_sExportDir + "/" + m_sPackageName + "/__init__.py";
+    WsjcppLog::info(TAG, "Prepare __init__.py " + sFilename);
+
+
     std::ofstream __init__;
-    std::cout << " * write code to libfreehackquest-client-py/libfreehackquestclient/__init__.py " << std::endl;
-    __init__.open ("libfreehackquest-client-py/libfreehackquestclient/__init__.py");
+    __init__.open (sFilename);
 
-    std::time_t t = std::time(nullptr);
-    std::stringstream buffer;
-    buffer << std::put_time(std::gmtime(&t), "%d %b %Y");
-
-    // now the result is in `buffer.str()`.
+    long nSec = WsjcppCore::currentTime_seconds();
 
     PyCodeBuilder builder;
     builder
     .add("#!/usr/bin/env python3")
     .add("# -*- coding: utf-8 -*-")
     .add("### This file was automatically generated by fhq-server")
-    .add("### Version: " + std::string(WSJCPP_APP_VERSION))
-    .add("### Date: " + buffer.str())
+    .add("### Version: " + m_sAppVersion)
+    .add("### Date: " + WsjcppCore::formatTimeForWeb(nSec))
     .add("")
     .add("import asyncio")
     .add("import websocket")
@@ -322,7 +435,7 @@ void WsjcppJsonRpc20ExportCliPython::export__init__py() {
     .sub("class FreeHackQuestClient:")
         .add("__ws = None")
         .add("__url = None")
-        .add("__cli_version = '" + std::string(WSJCPP_APP_VERSION) + "'")
+        .add("__cli_version = '" + m_sAppVersion + "'")
         .add("__loop = None")
         .add("__connecting = False")
         .add("__messageIdCounter = 0")
@@ -550,7 +663,8 @@ void WsjcppJsonRpc20ExportCliPython::export__init__py() {
     builder.end();
     builder.print(__init__);
     __init__.close();
-    std::cout << "\t> OK" << std::endl;
+    WsjcppLog::ok(TAG, "Done: " + sFilename);
+    return true;
 }
 
 // ---------------------------------------------------------------------

@@ -6,30 +6,32 @@
 // ---------------------------------------------------------------------
 // WsjcppJsonRpc20HandlerGameCreate
 
+REGISTRY_WSJCPP_JSONRPC20_HANDLER(WsjcppJsonRpc20HandlerGameCreate)
+
 WsjcppJsonRpc20HandlerGameCreate::WsjcppJsonRpc20HandlerGameCreate() 
 : WsjcppJsonRpc20HandlerBase("game_create", "TODO description") {
     TAG = "WsjcppJsonRpc20HandlerGameCreate";
-    // setAccessUnauthorized(true);
-    // setAccessUser(true);
-    // setAccessTester(true);
-    // setAccessAdmin(true);
-    // void setActivatedFromVersion("v0.0.1"); // TODO authomatic set WSJCPP_APP_VERSION
+    setAccessUnauthorized(false);
+    setAccessUser(true);
+    setAccessTester(true);
+    setAccessAdmin(true);
+    setActivatedFromVersion("v0.0.2");
     // void setDeprecatedFromVersion("");
 
     // description of input params
-    // requireStringParam("uuid", "object uuid")
-    //    .addValidator(new WsjcppValidatorUUID());
-    // optionalStringParam("name", "Name of object")
-    //    .addValidator(new WsjcppValidatorStringLength(3,10));
+    requireStringParam("uuid", "object uuid")
+        .addValidator(new WsjcppValidatorUUID());
+    optionalStringParam("name", "Name of object")
+        .addValidator(new WsjcppValidatorStringLength(3,10));
 
-    // requireIntegerParam("cost", "Name of object")
-    //    .addValidator(new WsjcppValidatorIntegerMinValue(3))
-    //    .addValidator(new WsjcppValidatorIntegerMaxValue(1000));
-    // optionalIntegerParam("age", "Name of object")
-    //    .addValidator(new WsjcppValidatorIntegerMinValue(0))
+    requireIntegerParam("cost", "Name of object")
+        .addValidator(new WsjcppValidatorIntegerMinValue(3))
+        .addValidator(new WsjcppValidatorIntegerMaxValue(1000));
+    optionalIntegerParam("age", "Name of object")
+        .addValidator(new WsjcppValidatorIntegerMinValue(0));
 
-    // requireBooleanParam("public", "True if object is public");
-    // optionalBooleanParam("activated", "If object can handle");
+    requireBooleanParam("public", "True if object is public");
+    optionalBooleanParam("activated", "If object can handle");
 }
 
 // ---------------------------------------------------------------------

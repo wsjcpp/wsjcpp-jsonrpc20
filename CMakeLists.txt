@@ -14,6 +14,9 @@ list (APPEND WSJCPP_SOURCES "src/main.cpp")
 list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20.h")
 list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20.cpp")
 
+list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20_export_cli_python.h")
+list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20_export_cli_python.cpp")
+
 # examples
 list (APPEND WSJCPP_SOURCES "./src/examples/wsjcpp_json_rpc20_handler_game_create.h")
 list (APPEND WSJCPP_SOURCES "./src/examples/wsjcpp_json_rpc20_handler_game_create.cpp")
