@@ -30,6 +30,32 @@ $ wsjcpp install https://github.com/wsjcpp/wsjcpp-jsonrpc20:master
 * src/wsjcpp_jsonrpc20_export_cli_python.h
 * src/wsjcpp_jsonrpc20_export_cli_python.cpp
 
+## Prepare handler
+
+easy way:
+
+```
+$ wsjcpp generate WsjcppJsonRpc20Handler GameCreate
+```
+
+Will be generated new files 
+
+- ./src/wsjcpp_json_rpc20_handler_game_create.h
+- ./src/wsjcpp_json_rpc20_handler_game_create.cpp
+
+And automaticly included to CMakeLists.txt between `#### BEGIN_WSJCPP_APPEND` and `#### END_WSJCPP_APPEND`
+
+Like this:
+```
+#### BEGIN_WSJCPP_APPEND
+list (APPEND WSJCPP_SOURCES "./src/wsjcpp_json_rpc20_handler_game_create.h")
+list (APPEND WSJCPP_SOURCES "./src/wsjcpp_json_rpc20_handler_game_create.cpp")
+#### END_WSJCPP_APPEND
+```
+
+They will contains class `WsjcppJsonRpc20HandlerGameCreate` with method `game_create`
+
+
 ## Example 
 
 ``` cpp

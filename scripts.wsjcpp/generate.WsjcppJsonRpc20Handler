@@ -5,10 +5,10 @@
 
 make_dir "src"
 
-var argument_processor_name
-set_value argument_processor_name arg1
-normalize_class_name argument_processor_name
-convert_CamelCase_to_snake_case argument_processor_name argument_processor_name
+var method_name
+set_value method_name arg1
+normalize_class_name method_name
+convert_CamelCase_to_snake_case method_name method_name
 
 var class_name
 concat class_name "WsjcppJsonRpc20Handler" arg1
@@ -34,7 +34,7 @@ var content_header
 concat content_header "#ifndef " ifndef_header "
 #define " ifndef_header "
 
-#include <wsjcpp_arguments.h>
+#include <wsjcpp_jsonrpc20.h>
 
 class " class_name " : public WsjcppJsonRpc20HandlerBase {
     public:
@@ -46,37 +46,38 @@ class " class_name " : public WsjcppJsonRpc20HandlerBase {
 
  
 var content_source
-concat content_source  "
+concat content_source "
 #include \"" base_filename ".h\"
+#include <wsjcpp_core.h>
 #include <wsjcpp_jsonrpc20.h>
 
 // ---------------------------------------------------------------------
 // " class_name "
 
 " class_name "::" class_name "() 
-: WsjcppJsonRpc20HandlerBase(\"" argument_processor_name "\", \"TODO description\") {
+: WsjcppJsonRpc20HandlerBase(\"" method_name "\", \"TODO description\") {
     TAG = \"" class_name "\";
     // setAccessUnauthorized(true);
     // setAccessUser(true);
-    // setAccessTester(\"here example of command\");
-    // setAccessAdmin();
-    // void setActivatedFromVersion(\"v0.0.1"); // TODO authomatic set WSJCPP_APP_VERSION
-    // void setDeprecatedFromVersion("");
+    // setAccessTester(true);
+    // setAccessAdmin(true);
+    // void setActivatedFromVersion(\"v0.0.1\"); // TODO authomatic set WSJCPP_APP_VERSION
+    // void setDeprecatedFromVersion(\"\");
 
     // description of input params
-    // requireStringParam(\"uuid\", "object uuid")
+    // requireStringParam(\"uuid\", \"object uuid\")
     //    .addValidator(new WsjcppValidatorUUID());
-    // optionalStringParam(\"name\", "Name of object")
+    // optionalStringParam(\"name\", \"Name of object\")
     //    .addValidator(new WsjcppValidatorStringLength(3,10));
 
-    // requireIntegerParam(\"cost\", "Name of object")
+    // requireIntegerParam(\"cost\", \"Name of object\")
     //    .addValidator(new WsjcppValidatorIntegerMinValue(3))
     //    .addValidator(new WsjcppValidatorIntegerMaxValue(1000));
-    // optionalIntegerParam(\"age\", "Name of object")
+    // optionalIntegerParam(\"age\", \"Name of object\")
     //    .addValidator(new WsjcppValidatorIntegerMinValue(0))
 
-    // requireBooleanParam(\"public\", "True if object is public");
-    // optionalBooleanParam(\"activated\", "If object can handle");
+    // requireBooleanParam(\"public\", \"True if object is public\");
+    // optionalBooleanParam(\"activated\", \"If object can handle\");
 }
 
 // ---------------------------------------------------------------------
@@ -84,7 +85,7 @@ concat content_source  "
 void " class_name "::handle(WsjcppJsonRpc20Request *pRequest) {
     WsjcppLog::err(TAG, \"Not implemented\");
     // TODO
-    pRequest->fail(WsjcppJsonRpc20Error(501, "NOT_IMPLEMENTED"));
+    pRequest->fail(WsjcppJsonRpc20Error(501, \"NOT_IMPLEMENTED\"));
 }
 
 "

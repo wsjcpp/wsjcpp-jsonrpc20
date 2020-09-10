@@ -11,6 +11,12 @@ set(EXECUTABLE_OUTPUT_PATH ${wsjcpp-jsonrpc20_SOURCE_DIR})
 list (APPEND WSJCPP_INCLUDE_DIRS "src")
 
 list (APPEND WSJCPP_SOURCES "src/main.cpp")
+list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20.h")
+list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20.cpp")
+
+# examples
+list (APPEND WSJCPP_SOURCES "./src/examples/wsjcpp_json_rpc20_handler_game_create.h")
+list (APPEND WSJCPP_SOURCES "./src/examples/wsjcpp_json_rpc20_handler_game_create.cpp")
 
 #### BEGIN_WSJCPP_APPEND
 #### END_WSJCPP_APPEND
@@ -27,4 +33,5 @@ install(
     RUNTIME DESTINATION
         /usr/bin
 )
+
 
