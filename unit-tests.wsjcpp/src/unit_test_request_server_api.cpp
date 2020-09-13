@@ -45,13 +45,23 @@ bool UnitTestRequestServerApi::run() {
     compareS(bTestSuccess, "Response: check id", sId, "id1");
     compareS(bTestSuccess, "Response: check jsonrpc", sJsonRpc, "2.0");
 
-    int nDataLength = respJson["result"]["data_length"];
+    
     std::string sVersion = respJson["result"]["version"];
     compareS(bTestSuccess, "Response: check result.version", sVersion, std::string(WSJCPP_APP_VERSION));
-    compareN(bTestSuccess, "Response: check result.data_length", nDataLength, 1);
     
+    int nDataLength = respJson["result"]["data_length"];
+    int nExpectedDataLength = respJson["result"]["data"].size();
+    compareN(bTestSuccess, "Response: check result.data_length", nDataLength, nExpectedDataLength);
 
-    nlohmann::json data0Json = respJson["result"]["data"][0];
+    int nId = 1;
+    for (int i = 0; i < nExpectedDataLength; i++) {
+        std::string sMethodName0 = respJson["result"]["data"][i]["method"];
+        if (sMethodName0 == "server_api") {
+            nId = i;
+        }
+    }
+
+    nlohmann::json data0Json = respJson["result"]["data"][nId];
     bool bAccessUnauthorized = data0Json["access"]["unauthorized"];
     bool bAccessUser = data0Json["access"]["user"];
     bool bAccessTester = data0Json["access"]["tester"];

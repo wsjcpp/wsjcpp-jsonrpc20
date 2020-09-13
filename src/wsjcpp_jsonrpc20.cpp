@@ -713,25 +713,41 @@ bool WsjcppJsonRpc20Request::parseIncomeData(const std::string &sIncomeData) {
         this->fail(WsjcppJsonRpc20Error(400, "WRONG_JSON"));
         return false;
     }
+
     m_jsonRequest = nlohmann::json::parse(sIncomeData);
 
     if (m_jsonRequest["method"].is_string()) {
         m_sMethod = m_jsonRequest["method"];
     }
 
-
     if (m_jsonRequest["id"].is_string()) {
         m_sId = m_jsonRequest["id"];
     }
 
     if (m_sMethod == "unknown_method") {
-        this->fail(WsjcppJsonRpc20Error(404, "NOT_FOUND_METHOD_IN_REQUEST"));
+        this->fail(WsjcppJsonRpc20Error(400, "NOT_FOUND_METHOD_IN_REQUEST"));
         return false;
     }
 
     if (m_sId == "unknown_id") {
-        this->fail(WsjcppJsonRpc20Error(404, "NOT_FOUND_ID_IN_REQUEST"));
+        this->fail(WsjcppJsonRpc20Error(400, "NOT_FOUND_ID_IN_REQUEST"));
         return false;
+    }
+
+    if (m_jsonRequest.find("jsonrpc") == m_jsonRequest.end()) {
+        this->fail(WsjcppJsonRpc20Error(400, "NOT_FOUND_FIELD_JSONRPC_IN_REQUEST"));
+        return false;
+    } else {
+        if (!m_jsonRequest["jsonrpc"].is_string()) {
+            this->fail(WsjcppJsonRpc20Error(400, "FIELD_JSONRPC_EXPECTED_AS_STRING_IN_REQUEST"));
+            return false;
+        } else {
+            std::string sJsonRpc = m_jsonRequest["jsonrpc"];
+            if (sJsonRpc != "2.0") {
+                this->fail(WsjcppJsonRpc20Error(400, "FIELD_JSONRPC_EXPECTED_2_DOT_0_IN_REQUEST"));
+                return false;
+            }
+        }
     }
 
     // m_pWsjcppJsonRpc20UserSession = m_pServer->findUserSession(m_pClient);
