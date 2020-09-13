@@ -35,7 +35,7 @@ class WsjcppJsonRpc20ExportCliPython {
         std::string m_sUrl;
         std::string m_sDownloadUrl;
         std::vector<std::string> m_vKeywords;
-        std::map<std::string,std::string> m_vMethodsForKeepAuthToken;
+        std::vector<std::pair<std::string, std::string>> m_vMethodsForKeepAuthToken;
         std::vector<std::string> m_vMethodsForClearAuthToken;
 
         bool exportPrepareDirs();

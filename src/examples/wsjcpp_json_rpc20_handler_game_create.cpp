@@ -32,6 +32,8 @@ WsjcppJsonRpc20HandlerGameCreate::WsjcppJsonRpc20HandlerGameCreate()
 
     requireBooleanParam("public", "True if object is public");
     optionalBooleanParam("activated", "If object can handle");
+
+    optionalJsonParam("custom", "Some custom json");
 }
 
 // ---------------------------------------------------------------------

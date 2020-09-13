@@ -191,7 +191,7 @@ void WsjcppJsonRpc20ExportCliPython::setKeywords(const std::vector<std::string> 
 // ---------------------------------------------------------------------
 
 void WsjcppJsonRpc20ExportCliPython::addLoginMethod(const std::string &sMethod, const std::string &sResultVarName) {
-    m_vMethodsForKeepAuthToken[sMethod] = sResultVarName;
+    m_vMethodsForKeepAuthToken.push_back(std::pair<std::string,std::string>(sMethod, sResultVarName));
 }
 
 // ---------------------------------------------------------------------
@@ -366,13 +366,13 @@ bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
 
     std::map<std::string, WsjcppJsonRpc20HandlerBase*>::iterator it = g_pWsjcppJsonRpc20HandlerList->begin();
     for (; it!=g_pWsjcppJsonRpc20HandlerList->end(); ++it) {
-        std::string sCmd = it->first;
+        std::string sMethod = it->first;
         WsjcppJsonRpc20HandlerBase* pWsjcppJsonRpc20HandlerBase = it->second;
 
         apimd
             << "<details>\n"
-            << "<summary>" << sCmd << "</summary>\n\n"
-            << "## " << sCmd << "\n\n";
+            << "<summary>" << sMethod << "</summary>\n\n"
+            << "## " << sMethod << "\n\n";
 
         if (pWsjcppJsonRpc20HandlerBase->getDescription() != "") {
             apimd << pWsjcppJsonRpc20HandlerBase->getDescription() << "\n\n";
@@ -412,7 +412,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
         }
         apimd 
             << "\n\n"
-            << " #### example call method \n\n ```\nresponse = client." + sCmd + "(\n" + pythonTemplate + "\n)\n```"
+            << " #### example call method \n\n ```\nresponse = client." + sMethod + "(\n" + pythonTemplate + "\n)\n```"
             << "\n\n</details>"
             << "\n\n";
     }
@@ -435,6 +435,39 @@ bool WsjcppJsonRpc20ExportCliPython::exportInitPy() {
 }
 
 // ---------------------------------------------------------------------
+
+void exportCliPythonAddCheckDataTypeOfParam(
+    PyCodeBuilder &builder,
+    WsjcppJsonRpc20ParamDef &paramDef,
+    const std::string &sClassName,
+    const std::string &sMethod
+) {
+    std::string sParamName = paramDef.getName();
+    if (paramDef.isBool()) {
+        builder
+            .sub("if not isinstance(" + sParamName + ", bool): ")
+                .add("raise Exception('Parameter \"" + sParamName + "\" expected datatype \"bool\" (lib: " + sClassName + "." + sMethod + " )')")
+                .end();
+    } else if (paramDef.isString()) {
+        builder
+            .sub("if not isinstance(" + sParamName + ", str): ")
+                .add("raise Exception('Parameter \"" + sParamName + "\" expected datatype \"str\" (lib: " + sClassName + "." + sMethod + " )')")
+                .end();
+    } else if (paramDef.isInteger()) {
+        builder
+            .sub("if not isinstance(" + sParamName + ", int): ")
+                .add("raise Exception('Parameter \"" + sParamName + "\" expected datatype \"int\" (lib: " + sClassName + "." + sMethod + " )')")
+                .end();
+    } else if (paramDef.isJson()) {
+        builder
+            .sub("if not isinstance(" + sParamName + ", dict): ")
+                .add("raise Exception('Parameter \"" + sParamName + "\" expected \"dict\" (lib: " + sClassName + "." + sMethod + " )')")
+                .end();
+    } else {
+        WsjcppLog::throw_err("exportCliPythonAddCheckDataTypeOfParam",
+            "Not handled type for '" + sParamName + "' in method '" + sMethod + "'");
+    }
+};
 
 bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
     std::string sFilename = m_sExportDir + "/" + m_sPackageName + "/" + m_sClassName + ".py";
@@ -507,11 +540,6 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             .sub("else:")
                 .add("print('ERROR: Token can be set only once')")
                 .end()
-            .end()
-        .add("")
-        .sub("def processIncomeJson(self, jsonIn):")
-            .add("# TODO login logoff and another things")
-            .add("return jsonIn")
             .end()
         .add("")
         .sub("def close(self):")
@@ -604,6 +632,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             .add("requestJson['id'] = msgId")
             .add("requestJson['method'] = method")
             .add("requestJson['jsonrpc'] = '2.0'")
+            .add("requestJson['params'] = {}")
             .add("return requestJson")
             .end()
         .add("")
@@ -614,17 +643,61 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             .add("# print('requestText: ' + requestText)")
             .add("self.__ws.send(requestText) ")
             .add("result = self.__loop.run_until_complete(asyncio.gather(self.__looper(messageId)))")
-            .add("return result[0]")
+            .add("result = self.preprocessIncomeJson(result[0])")
+            .add("return result")
             .end()
         .add("");
 
+    // prepare login / logoff
+    builder
+        .sub("def preprocessIncomeJson(self, jsonIn):")
+            .sub("if jsonIn == None:")
+                .add("return jsonIn")
+                .end()
+    ;
+    for (int i = 0; i < m_vMethodsForClearAuthToken.size(); i++) {
+        builder
+            .sub("if jsonIn['method'] == '" + m_vMethodsForClearAuthToken[i] + "' and 'result' in jsonIn:")
+                .add("self.__token = None")
+                .end();
+    }
+    for (int i = 0; i < m_vMethodsForKeepAuthToken.size(); i++) {
+        std::pair<std::string,std::string> p = m_vMethodsForKeepAuthToken[i];
+        builder
+            .sub("if jsonIn['method'] == '" + p.first + "' and 'result' in jsonIn:")
+                .add("self.__token = jsonIn['result']['" + p.second + "']")
+                .end();
+    }
+    builder
+        .add("return jsonIn")
+        .end()
+    .add("")
+    ;
+
     std::map<std::string, WsjcppJsonRpc20HandlerBase*>::iterator it = g_pWsjcppJsonRpc20HandlerList->begin();
     for (; it != g_pWsjcppJsonRpc20HandlerList->end(); ++it) {
-        std::string sCmd = it->first;
+        std::string sMethod = it->first;
         WsjcppJsonRpc20HandlerBase* pWsjcppJsonRpc20HandlerBase = it->second;
+        std::vector<WsjcppJsonRpc20ParamDef> vParams = pWsjcppJsonRpc20HandlerBase->inputs();
+
+        std::string sRequestParams = "";
+        if (vParams.size() > 0) {
+            for (int i = 0; i < vParams.size(); i++) {
+                WsjcppJsonRpc20ParamDef inDef = vParams[i];
+                if (inDef.isRequired()) {
+                    sRequestParams += ", " + inDef.getName();
+                }
+            }
+            for (int i = 0; i < vParams.size(); i++) {
+                WsjcppJsonRpc20ParamDef inDef = vParams[i];
+                if (inDef.isOptional()) {
+                    sRequestParams += ", " + inDef.getName() + " = None";
+                }
+            }
+        }
 
         builder
-        .sub("def " + sCmd + "(self, req):")
+        .sub("def " + sMethod + "(self" + sRequestParams + "):")
             .sub("\"\"\"" + pWsjcppJsonRpc20HandlerBase->getDescription())
                 .add("");
         
@@ -636,7 +709,6 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             builder.add("Deprecated From Version: " + pWsjcppJsonRpc20HandlerBase->getDeprecatedFromVersion());
         }
 
-
         builder
             .add(pWsjcppJsonRpc20HandlerBase->haveUnauthorizedAccess() ? "Allowed access for unauthorized users" : "Denied access for unauthorized users")
             .add(pWsjcppJsonRpc20HandlerBase->haveUserAccess() ? "Allowed access for users" : "Denied access for users")
@@ -644,16 +716,18 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             .add(pWsjcppJsonRpc20HandlerBase->haveAdminAccess() ? "Allowed access for admins" : "Denied access for admins")
             .add("");
 
-        builder
-            .sub("Args:");
-        
-        std::vector<WsjcppJsonRpc20ParamDef> vVin = pWsjcppJsonRpc20HandlerBase->inputs();
-        for (int i = 0; i < vVin.size(); i++) {
-            WsjcppJsonRpc20ParamDef inDef = vVin[i];
-            std::string nameIn = std::string(inDef.getName());
-            builder.add(nameIn + " (" + inDef.getType() + "): " + inDef.getRestrict() + ", " + inDef.getDescription());
+        if (vParams.size() > 0) {
+            builder
+                .sub("Args:");
+
+            for (int i = 0; i < vParams.size(); i++) {
+                WsjcppJsonRpc20ParamDef inDef = vParams[i];
+                std::string nameIn = std::string(inDef.getName());
+                builder.add(nameIn + " (" + inDef.getType() + "): " + inDef.getRestrict() + ", " + inDef.getDescription());
+            }
+            builder.end();
         }
-        builder.end();
+
         /* 
         Returns:
             bool: The return value. True for success, False otherwise.
@@ -663,44 +737,34 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
                 .end()
             .add("\"\"\"")
             .add("if not self.hasConnection(): return None")
-            .add("requestJson = self.generateBaseCommand('" + sCmd + "')");
-           
+            .add("reqJson = self.generateBaseCommand('" + sMethod + "')");
+        ;
+
         // check required
-        std::string sAllowedInputParamNames = "";
-        for (int i = 0; i < vVin.size(); i++) {
-            if (sAllowedInputParamNames.length() > 0) {
-                sAllowedInputParamNames += ",";
-            }
-            sAllowedInputParamNames += "'" + vVin[i].getName() + "'";
-        }
-        builder
-            .add("allowedParams = [" + sAllowedInputParamNames + "]")
-            .sub("for paramName in req:")
-                .sub("if paramName not in allowedParams:")
-                    .add("raise Exception('Excess parameter \"' + paramName + '\" (lib)')")
-                    .end()
-                .end();
-        for (int i = 0; i < vVin.size(); i++) {
-            WsjcppJsonRpc20ParamDef inDef = vVin[i];
-            if (inDef.isRequired()) {
-                std::string nameIn = std::string(vVin[i].getName());
+        for (int i = 0; i < vParams.size(); i++) {
+            WsjcppJsonRpc20ParamDef paramDef = vParams[i];
+            std::string sParamName = paramDef.getName();
+            if (paramDef.isRequired()) {
                 builder
-                .sub("if '" + nameIn + "' not in req: ")
-                    .add("raise Exception('Parameter \"" + nameIn + "\" expected (lib)')")
+                .sub("if " + sParamName + " == None: ")
+                    .add("raise Exception('Parameter \"" + sParamName + "\" expected (lib: " + m_sClassName + "." + sMethod + ")')")
                     .end();
+                exportCliPythonAddCheckDataTypeOfParam(builder, paramDef, m_sClassName, sMethod);
+                builder.add("reqJson['params']['" + sParamName + "'] = " + sParamName);
+            } else if (paramDef.isOptional()) {
+                builder
+                    .sub("if " + sParamName + " != None: ");
+                exportCliPythonAddCheckDataTypeOfParam(builder, paramDef, m_sClassName, sMethod);
+                    builder
+                        .add("reqJson['params']['" + sParamName + "'] = " + sParamName)
+                        .end();
+            } else {
+                WsjcppLog::throw_err(TAG, "Prameter must be required or optional");
             }
         }
 
-        for (int i = 0; i < vVin.size(); i++) {
-            std::string nameIn = std::string(vVin[i].getName());
-            builder
-            .sub("if '" + nameIn + "' in req: ")
-                .add("requestJson['" + nameIn + "'] = req['" + nameIn + "']")
-                .end();
-        }
-
         builder
-            .add("return self.__sendCommand(requestJson)")
+            .add("return self.__sendCommand(reqJson)")
             .end()
         .add("");
     }

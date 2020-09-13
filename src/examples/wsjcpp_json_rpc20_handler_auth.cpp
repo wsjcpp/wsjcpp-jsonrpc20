@@ -23,6 +23,8 @@ WsjcppJsonRpc20HandlerAuthLogin::WsjcppJsonRpc20HandlerAuthLogin()
         .addValidator(new WsjcppValidatorStringLength(5,10));
     requireStringParam("password", "User Password")
         .addValidator(new WsjcppValidatorStringLength(5,20));
+    optionalStringParam("client_app_name", "Client app name");
+    optionalStringParam("client_app_version", "Client app version");
 }
 
 // ---------------------------------------------------------------------
@@ -77,6 +79,8 @@ WsjcppJsonRpc20HandlerAuthToken::WsjcppJsonRpc20HandlerAuthToken()
     // description of input params
     requireStringParam("token", "Token")
         .addValidator(new WsjcppValidatorStringLength(10,100));
+    optionalStringParam("client_app_name", "Client app name");
+    optionalStringParam("client_app_version", "Client app version");
 }
 
 // ---------------------------------------------------------------------

@@ -15,10 +15,6 @@ int main(int argc, const char* argv[]) {
     WsjcppLog::setPrefixLogFile("wsjcpp");
     WsjcppLog::setLogDirectory(".logs");
 
-    
-
-    
-
     std::cout << "Generate client python library" << std::endl;
     
     std::string sExportDir = "./example-of-exported-client-libraries";
@@ -35,6 +31,7 @@ int main(int argc, const char* argv[]) {
     exportCliPython.setDownloadUrl("https://github.com/wsjcpp/wsjcpp-jsonrpc20/archive/" + std::string(WSJCPP_APP_NAME) + ".tar.gz");
     exportCliPython.setKeywords({std::string(WSJCPP_APP_NAME), "wsjcpp", "wsjcpp-jsonrpc20", "example-python-client"});
     exportCliPython.addLoginMethod("auth_login", "token");
+    exportCliPython.addLoginMethod("auth_token", "token");
     exportCliPython.addLogoffMethod("auth_logoff");
 
     if (!exportCliPython.doExportLib()) {
