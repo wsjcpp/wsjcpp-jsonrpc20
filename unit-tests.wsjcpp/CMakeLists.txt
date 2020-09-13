@@ -51,6 +51,8 @@ list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_json_rpc20_user_
 list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_json_rpc20_user_session.cpp")
 list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_json_rpc20_param_def.h")
 list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_json_rpc20_param_def.cpp")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_request_server_api.h")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_request_server_api.cpp")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.user-custom.txt)
 

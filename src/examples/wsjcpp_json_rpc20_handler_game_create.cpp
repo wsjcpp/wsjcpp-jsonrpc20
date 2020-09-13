@@ -9,7 +9,7 @@
 REGISTRY_WSJCPP_JSONRPC20_HANDLER(WsjcppJsonRpc20HandlerGameCreate)
 
 WsjcppJsonRpc20HandlerGameCreate::WsjcppJsonRpc20HandlerGameCreate() 
-: WsjcppJsonRpc20HandlerBase("game_create", "TODO description") {
+: WsjcppJsonRpc20HandlerBase("game_create", "Some example of description") {
     TAG = "WsjcppJsonRpc20HandlerGameCreate";
     setAccessUnauthorized(false);
     setAccessUser(true);

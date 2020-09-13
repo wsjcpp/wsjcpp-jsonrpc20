@@ -714,18 +714,11 @@ bool WsjcppJsonRpc20Request::parseIncomeData(const std::string &sIncomeData) {
         return false;
     }
     m_jsonRequest = nlohmann::json::parse(sIncomeData);
-    
-    if (m_jsonRequest["cmd"].is_string()) { // deprecated
-        m_sMethod = m_jsonRequest["cmd"];
-    }
 
     if (m_jsonRequest["method"].is_string()) {
         m_sMethod = m_jsonRequest["method"];
     }
 
-    if (m_jsonRequest["m"].is_string()) { // deprecated
-        m_sId = m_jsonRequest["m"];
-    }
 
     if (m_jsonRequest["id"].is_string()) {
         m_sId = m_jsonRequest["id"];
@@ -1130,6 +1123,7 @@ WsjcppJsonRpc20HandlerServerApi::WsjcppJsonRpc20HandlerServerApi()
     : WsjcppJsonRpc20HandlerBase("server_api", "This method Will be return list of all handlers") {
 
     setAccessUnauthorized(true);
+    setAccessTester(true);
     setAccessUser(true);
     setAccessAdmin(true);
 }
@@ -1152,6 +1146,7 @@ void WsjcppJsonRpc20HandlerServerApi::handle(WsjcppJsonRpc20Request *pRequest) {
 
     nlohmann::json jsonHandlers = nlohmann::json::array();
     std::map<std::string, WsjcppJsonRpc20HandlerBase *>::iterator it = g_pWsjcppJsonRpc20HandlerList->begin();
+    int nDataLength = 0;
     while (it != g_pWsjcppJsonRpc20HandlerList->end()) {
         std::string sCmd = it->first;
         WsjcppJsonRpc20HandlerBase *pHandler = g_pWsjcppJsonRpc20HandlerList->at(sCmd);
@@ -1160,20 +1155,28 @@ void WsjcppJsonRpc20HandlerServerApi::handle(WsjcppJsonRpc20Request *pRequest) {
 
         jsonHandler["method"] = pHandler->getMethodName();
         jsonHandler["description"] = pHandler->getDescription();
-        jsonHandler["access_unauthorized"] = pHandler->haveUnauthorizedAccess();
-        jsonHandler["access_user"] = pHandler->haveUserAccess();
-        jsonHandler["access_tester"] = pHandler->haveTesterAccess();
-        jsonHandler["access_admin"] = pHandler->haveAdminAccess();
+
+        nlohmann::json jsonAccess;
+        jsonAccess["unauthorized"] = pHandler->haveUnauthorizedAccess();
+        jsonAccess["user"] = pHandler->haveUserAccess();
+        jsonAccess["tester"] = pHandler->haveTesterAccess();
+        jsonAccess["admin"] = pHandler->haveAdminAccess();
+        jsonHandler["access"] = jsonAccess;
 
         nlohmann::json jsonInputs = nlohmann::json::array();
         std::vector<WsjcppJsonRpc20ParamDef> ins = pHandler->inputs();
-        for (unsigned int i = 0; i < ins.size(); i++) {
-            jsonInputs.push_back(ins[i].toJson());
+        if (ins.size() > 0) {
+            for (unsigned int i = 0; i < ins.size(); i++) {
+                jsonInputs.push_back(ins[i].toJson());
+            }
+            jsonHandler["params"] = jsonInputs;
         }
-        jsonHandler["params"] = jsonInputs;
         jsonHandlers.push_back(jsonHandler);
         it++;
+        nDataLength++;
     }
+    
     jsonResponse["data"] = jsonHandlers;
+    jsonResponse["data_length"] = nDataLength;
     pRequest->done(jsonResponse);
 }

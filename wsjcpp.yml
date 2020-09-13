@@ -52,3 +52,5 @@ unit-tests:
       description: "Test the user session object"
     - name: "JsonRpc20ParamDef"
       description: "Test"
+    - name: "RequestServerApi"
+      description: ""

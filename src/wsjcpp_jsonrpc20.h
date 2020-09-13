@@ -7,16 +7,6 @@
 #include <iostream>
 #include <algorithm>
 
-class WsjcppJsonRpc20Error;
-class WsjcppJsonRpc20UserSession;
-class WsjcppJsonRpc20ParamDef;
-class WsjcppJsonRpc20WebSocketClient;
-class WsjcppJsonRpc20WebSocketServer;
-class WsjcppJsonRpc20ParamDef;
-class WsjcppJsonRpc20Request;
-class WsjcppJsonRpc20BaseHandler;
-class WsjcppJsonRpc20;
-
 // ---------------------------------------------------------------------
 // WsjcppJsonRpc20Error
 
@@ -114,6 +104,37 @@ class WsjcppJsonRpc20WebSocketClient {
 
     private:
         WsjcppJsonRpc20UserSession *m_pUserSession;
+};
+
+// ---------------------------------------------------------------------
+
+class FakeWebSocketClient : public WsjcppJsonRpc20WebSocketClient {
+    public:
+        virtual void onDisconnected() override {
+            // nothing
+        };
+        virtual std::string getPeerIpAddress() override {
+            return "none";
+        };
+        
+        virtual int getPeerPort() override{
+            return 0;
+        };
+
+        virtual std::string getRequestUrl() override {
+            return "none";
+        };
+
+        virtual void sendTextMessage(const std::string &sTextMessage) override {
+            m_sLastTextMessage = sTextMessage;
+        };
+
+        std::string getLastTextMessage() {
+            return m_sLastTextMessage;
+        }
+
+    private:
+        std::string m_sLastTextMessage;
 };
 
 // ---------------------------------------------------------------------
