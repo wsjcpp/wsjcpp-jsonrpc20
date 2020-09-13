@@ -298,13 +298,17 @@ class WsjcppJsonRpc20HandlerBase {
         WsjcppJsonRpc20ParamDef &optionalIntegerParam(const std::string &sName, const std::string &sDescription);
         WsjcppJsonRpc20ParamDef &requireBooleanParam(const std::string &sName, const std::string &sDescription);
         WsjcppJsonRpc20ParamDef &optionalBooleanParam(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef &requireJsonParam(const std::string &sName, const std::string &sDescription);
+        WsjcppJsonRpc20ParamDef &optionalJsonParam(const std::string &sName, const std::string &sDescription);
 
         std::string TAG;
         std::string m_sMethodName;
         std::string m_sDescription;
 
     private:
-        std::vector<WsjcppJsonRpc20ParamDef> m_vInputs; // TODO redesign to map
+        void validateParamName(const std::string &sName);
+
+        std::vector<WsjcppJsonRpc20ParamDef> m_vInputs; // TODO rename to m_vParams to std::map
         // std::map<std::string, WsjcppJsonRpc20ParamDef*> *m_vWsjcppJsonRpc20ParamDefs;
         std::string m_sActivatedFromVersion;
         std::string m_sDeprecatedFromVersion;

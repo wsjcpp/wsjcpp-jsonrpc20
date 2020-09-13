@@ -1,9 +1,9 @@
 #include "wsjcpp_jsonrpc20.h"
 #include <wsjcpp_core.h>
+#include <regex>
 
-/*! 
- * WsjcppJsonRpc20Error - 
- * */
+// ---------------------------------------------------------------------
+// WsjcppJsonRpc20Error - 
 
 WsjcppJsonRpc20Error::WsjcppJsonRpc20Error(int nErrorCode, const std::string &sErrorMessage) {
     m_nErrorCode = nErrorCode;
@@ -958,6 +958,12 @@ bool WsjcppJsonRpc20HandlerBase::checkAccess(WsjcppJsonRpc20Request *pRequest, W
 
 // ---------------------------------------------------------------------
 
+const std::vector<WsjcppJsonRpc20ParamDef> &WsjcppJsonRpc20HandlerBase::inputs() {
+    return m_vInputs;
+}
+
+// ---------------------------------------------------------------------
+
 std::string WsjcppJsonRpc20HandlerBase::getMethodName() const {
     return m_sMethodName;
 }
@@ -1007,7 +1013,7 @@ void WsjcppJsonRpc20HandlerBase::setDeprecatedFromVersion(const std::string &sDe
 // ---------------------------------------------------------------------
 
 WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::requireStringParam(const std::string &sName, const std::string &sDescription) {
-    // TODO check duplicates
+    this->validateParamName(sName);
     WsjcppJsonRpc20ParamDef pStringDef(sName, sDescription);
     pStringDef.string_().required();
     m_vInputs.push_back(pStringDef);
@@ -1017,7 +1023,7 @@ WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::requireStringParam(const st
 // ---------------------------------------------------------------------
 
 WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::optionalStringParam(const std::string &sName, const std::string &sDescription) {
-    // TODO check duplicates
+    this->validateParamName(sName);
     WsjcppJsonRpc20ParamDef pStringDef(sName, sDescription);
     pStringDef.string_().optional();
     m_vInputs.push_back(pStringDef);
@@ -1027,7 +1033,7 @@ WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::optionalStringParam(const s
 // ---------------------------------------------------------------------
 
 WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::requireIntegerParam(const std::string &sName, const std::string &sDescription) {
-    // TODO check duplicates
+    this->validateParamName(sName);
     WsjcppJsonRpc20ParamDef pIntegerDef(sName, sDescription);
     pIntegerDef.integer_().required();
     m_vInputs.push_back(pIntegerDef);
@@ -1037,7 +1043,7 @@ WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::requireIntegerParam(const s
 // ---------------------------------------------------------------------
 
 WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::optionalIntegerParam(const std::string &sName, const std::string &sDescription) {
-    // TODO check duplicates
+    this->validateParamName(sName);
     WsjcppJsonRpc20ParamDef pIntegerDef(sName, sDescription);
     pIntegerDef.integer_().optional();
     m_vInputs.push_back(pIntegerDef);
@@ -1047,7 +1053,7 @@ WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::optionalIntegerParam(const 
 // ---------------------------------------------------------------------
 
 WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::requireBooleanParam(const std::string &sName, const std::string &sDescription) {
-    // TODO check duplicates
+    this->validateParamName(sName);
     WsjcppJsonRpc20ParamDef pBooleanDef(sName, sDescription);
     pBooleanDef.bool_().required();
     m_vInputs.push_back(pBooleanDef);
@@ -1057,7 +1063,7 @@ WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::requireBooleanParam(const s
 // ---------------------------------------------------------------------
 
 WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::optionalBooleanParam(const std::string &sName, const std::string &sDescription) {
-    // TODO check duplicates
+    this->validateParamName(sName);
     WsjcppJsonRpc20ParamDef pBooleanDef(sName, sDescription);
     pBooleanDef.bool_().optional();
     m_vInputs.push_back(pBooleanDef);
@@ -1066,8 +1072,36 @@ WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::optionalBooleanParam(const 
 
 // ---------------------------------------------------------------------
 
-const std::vector<WsjcppJsonRpc20ParamDef> &WsjcppJsonRpc20HandlerBase::inputs() {
-    return m_vInputs;
+WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::requireJsonParam(const std::string &sName, const std::string &sDescription) {
+    this->validateParamName(sName);
+    WsjcppJsonRpc20ParamDef pJsonDef(sName, sDescription);
+    pJsonDef.json_().required();
+    m_vInputs.push_back(pJsonDef);
+    return m_vInputs[m_vInputs.size()-1];
+}
+
+// ---------------------------------------------------------------------
+
+WsjcppJsonRpc20ParamDef &WsjcppJsonRpc20HandlerBase::optionalJsonParam(const std::string &sName, const std::string &sDescription) {
+    this->validateParamName(sName);
+    WsjcppJsonRpc20ParamDef pJsonDef(sName, sDescription);
+    pJsonDef.json_().optional();
+    m_vInputs.push_back(pJsonDef);
+    return m_vInputs[m_vInputs.size()-1];
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20HandlerBase::validateParamName(const std::string &sName) {
+    std::regex rxName("[a-z]+[0-9a-z_]*");
+    if (!std::regex_match(sName, rxName)) {
+        WsjcppLog::throw_err(TAG, "Parameter '" + sName + "' in method '" + m_sMethodName + "' has invalid format. Expected '[a-z]+[0-9a-z_]*'");
+    }
+    for (int i = 0; i < m_vInputs.size(); i++) {
+        if (m_vInputs[i].getName() == sName) {
+            WsjcppLog::throw_err(TAG, "Parameter '" + sName + "' in method '" + m_sMethodName + "' already exists");
+        }
+    }
 }
 
 // ---------------------------------------------------------------------
