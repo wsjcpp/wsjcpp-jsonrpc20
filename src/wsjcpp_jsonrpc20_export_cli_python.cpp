@@ -388,7 +388,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
 
         std::string pythonTemplate = "";
 
-        std::vector<WsjcppJsonRpc20ParamDef> vVin = pWsjcppJsonRpc20HandlerBase->inputs();
+        std::vector<WsjcppJsonRpc20ParamDef> vVin = pWsjcppJsonRpc20HandlerBase->getParamsDef();
         for (int i = 0; i < vVin.size(); i++) {
             WsjcppJsonRpc20ParamDef inDef = vVin[i];
             std::string nameIn = std::string(inDef.getName());
@@ -678,7 +678,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
     for (; it != g_pWsjcppJsonRpc20HandlerList->end(); ++it) {
         std::string sMethod = it->first;
         WsjcppJsonRpc20HandlerBase* pWsjcppJsonRpc20HandlerBase = it->second;
-        std::vector<WsjcppJsonRpc20ParamDef> vParams = pWsjcppJsonRpc20HandlerBase->inputs();
+        std::vector<WsjcppJsonRpc20ParamDef> vParams = pWsjcppJsonRpc20HandlerBase->getParamsDef();
 
         std::string sRequestParams = "";
         if (vParams.size() > 0) {

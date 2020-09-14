@@ -56,3 +56,5 @@ unit-tests:
       description: ""
     - name: "ParsingRequestParams"
       description: ""
+    - name: "RequestParseIncomeData"
+      description: ""

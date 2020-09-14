@@ -31,11 +31,14 @@ bool UnitTestRequestServerApi::run() {
     requestJson["jsonrpc"] = "2.0";
     requestJson["method"] = "server_api";
     requestJson["id"] = "id1";
-    requestJson["params"] = nlohmann::json::array();
-    pRequest->parseIncomeData(requestJson.dump());
+    
+    std::string sRequest = requestJson.dump();
+    compareB(bTestSuccess, "Response: check method", pRequest->parseIncomeData(sRequest), true);
+
     pHandlerServerApi->handle(pRequest);
 
     std::string sResponse = pFakeClient->getLastTextMessage();
+    // std::cout << "sResponse: " << sResponse << std::endl;
     nlohmann::json respJson = nlohmann::json::parse(sResponse);
 
     std::string sMethod = respJson["method"];
