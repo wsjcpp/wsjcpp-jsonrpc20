@@ -1,6 +1,6 @@
 # wsjcpp-jsonrpc20
 
-[![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-jsonrpc20.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-jsonrpc20)
+[![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-jsonrpc20.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-jsonrpc20) [![Total alerts](https://img.shields.io/lgtm/alerts/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/alerts/) [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/context:cpp) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/context:python)
 
 C++ Implementation for JsonRPC 2.0 (oriented on websockets)
 
