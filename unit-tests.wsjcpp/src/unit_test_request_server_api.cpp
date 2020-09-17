@@ -3,6 +3,9 @@
 #include <wsjcpp_core.h>
 #include <wsjcpp_jsonrpc20.h>
 
+// ---------------------------------------------------------------------
+// UnitTestRequestServerApi
+
 REGISTRY_WSJCPP_UNIT_TEST(UnitTestRequestServerApi)
 
 UnitTestRequestServerApi::UnitTestRequestServerApi()
@@ -11,14 +14,14 @@ UnitTestRequestServerApi::UnitTestRequestServerApi()
 
 // ---------------------------------------------------------------------
 
-void UnitTestRequestServerApi::init() {
+bool UnitTestRequestServerApi::doBeforeTest() {
     // nothing
+    return true;
 }
 
 // ---------------------------------------------------------------------
 
-bool UnitTestRequestServerApi::run() {
-    bool bTestSuccess = true;
+void UnitTestRequestServerApi::executeTest() {
 
     WsjcppJsonRpc20WebSocketServer *pWebSocketServer = new WsjcppJsonRpc20WebSocketServer();
     FakeWebSocketClient *pFakeClient = new FakeWebSocketClient();
@@ -33,7 +36,7 @@ bool UnitTestRequestServerApi::run() {
     requestJson["id"] = "id1";
     
     std::string sRequest = requestJson.dump();
-    compareB(bTestSuccess, "Response: check method", pRequest->parseIncomeData(sRequest), true);
+    compareB("Response: check method", pRequest->parseIncomeData(sRequest), true);
 
     pHandlerServerApi->handle(pRequest);
 
@@ -44,17 +47,17 @@ bool UnitTestRequestServerApi::run() {
     std::string sMethod = respJson["method"];
     std::string sId = respJson["id"];
     std::string sJsonRpc = respJson["jsonrpc"];
-    compareS(bTestSuccess, "Response: check method", sMethod, "server_api");
-    compareS(bTestSuccess, "Response: check id", sId, "id1");
-    compareS(bTestSuccess, "Response: check jsonrpc", sJsonRpc, "2.0");
+    compareS("Response: check method", sMethod, "server_api");
+    compareS("Response: check id", sId, "id1");
+    compareS("Response: check jsonrpc", sJsonRpc, "2.0");
 
     
     std::string sVersion = respJson["result"]["version"];
-    compareS(bTestSuccess, "Response: check result.version", sVersion, std::string(WSJCPP_APP_VERSION));
+    compareS("Response: check result.version", sVersion, std::string(WSJCPP_APP_VERSION));
     
     int nDataLength = respJson["result"]["data_length"];
     int nExpectedDataLength = respJson["result"]["data"].size();
-    compareN(bTestSuccess, "Response: check result.data_length", nDataLength, nExpectedDataLength);
+    compareN("Response: check result.data_length", nDataLength, nExpectedDataLength);
 
     int nId = 1;
     for (int i = 0; i < nExpectedDataLength; i++) {
@@ -70,17 +73,21 @@ bool UnitTestRequestServerApi::run() {
     bool bAccessTester = data0Json["access"]["tester"];
     bool bAccessAdmin = data0Json["access"]["admin"];
 
-    compareB(bTestSuccess, "Response: check result.data[0].access.unauthorized", bAccessUnauthorized, true);
-    compareB(bTestSuccess, "Response: check result.data[0].access.user", bAccessUser, true);
-    compareB(bTestSuccess, "Response: check result.data[0].access.tester", bAccessTester, true);
-    compareB(bTestSuccess, "Response: check result.data[0].access.admin", bAccessAdmin, true);
+    compareB("Response: check result.data[0].access.unauthorized", bAccessUnauthorized, true);
+    compareB("Response: check result.data[0].access.user", bAccessUser, true);
+    compareB("Response: check result.data[0].access.tester", bAccessTester, true);
+    compareB("Response: check result.data[0].access.admin", bAccessAdmin, true);
     
     sMethod = data0Json["method"];
-    compareS(bTestSuccess, "Response: check result.data[0].method", sMethod, "server_api");
+    compareS("Response: check result.data[0].method", sMethod, "server_api");
     std::string sDescription = data0Json["description"];
 
-    compareS(bTestSuccess, "Response: check result.data[0].method", sDescription, pHandlerServerApi->getDescription());
-    
-    return bTestSuccess;
+    compareS("Response: check result.data[0].method", sDescription, pHandlerServerApi->getDescription());
 }
 
+// ---------------------------------------------------------------------
+
+bool UnitTestRequestServerApi::doAfterTest() {
+    // nothing
+    return true;
+}

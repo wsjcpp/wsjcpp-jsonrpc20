@@ -83,14 +83,14 @@ UnitTestParsingRequestParams::UnitTestParsingRequestParams()
 
 // ---------------------------------------------------------------------
 
-void UnitTestParsingRequestParams::init() {
+bool UnitTestParsingRequestParams::doBeforeTest() {
     // nothing
+    return true;
 }
 
 // ---------------------------------------------------------------------
 
-bool UnitTestParsingRequestParams::run() {
-    bool bTestSuccess = true;
+void UnitTestParsingRequestParams::executeTest() {
 
     WsjcppJsonRpc20WebSocketServer *pWebSocketServer = new WsjcppJsonRpc20WebSocketServer();
     FakeWebSocketClient *pFakeClient = new FakeWebSocketClient();
@@ -107,23 +107,23 @@ bool UnitTestParsingRequestParams::run() {
         jsonRequest["method"] = "game_create";
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams0 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams0 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams0 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams0 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams0 error.message", sErrorMessage, "PARAMETER_REQUIRED");
+        compare("checkInputParams0 error.message", sErrorMessage, "PARAMETER_REQUIRED");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams0 error.code", nErrorCode, 400);
+        compare("checkInputParams0 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams0 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams0 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams0 error.context.param_name", sErrorContextParamName, "uuid1");
+        compare("checkInputParams0 error.context.param_name", sErrorContextParamName, "uuid1");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams0 id", sId, "id1");
+        compare("checkInputParams0 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams0 method", sMethod, "game_create");
+        compare("checkInputParams0 method", sMethod, "game_create");
     }
 
     // checkInputParams - paramer datatype string
@@ -138,23 +138,23 @@ bool UnitTestParsingRequestParams::run() {
         
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams1 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams1 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams1 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams1 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams1 error.message", sErrorMessage, "DATATYPE_OF_PARAMETER_EXPECTED_STRING");
+        compare("checkInputParams1 error.message", sErrorMessage, "DATATYPE_OF_PARAMETER_EXPECTED_STRING");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams1 error.code", nErrorCode, 400);
+        compare("checkInputParams1 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams1 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams1 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams1 error.context.param_name", sErrorContextParamName, "uuid1");
+        compare("checkInputParams1 error.context.param_name", sErrorContextParamName, "uuid1");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams1 id", sId, "id1");
+        compare("checkInputParams1 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams1 method", sMethod, "game_create");
+        compare("checkInputParams1 method", sMethod, "game_create");
     }
 
     // checkInputParams - parameter data type int
@@ -169,23 +169,23 @@ bool UnitTestParsingRequestParams::run() {
         jsonRequest["params"]["cost"] = "111";
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams2 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams2 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams2 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams2 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams2 error.message", sErrorMessage, "DATATYPE_OF_PARAMETER_EXPECTED_INTEGER");
+        compare("checkInputParams2 error.message", sErrorMessage, "DATATYPE_OF_PARAMETER_EXPECTED_INTEGER");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams2 error.code", nErrorCode, 400);
+        compare("checkInputParams2 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams2 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams2 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams2 error.context.param_name", sErrorContextParamName, "cost");
+        compare("checkInputParams2 error.context.param_name", sErrorContextParamName, "cost");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams2 id", sId, "id1");
+        compare("checkInputParams2 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams2 method", sMethod, "game_create");
+        compare("checkInputParams2 method", sMethod, "game_create");
     }
 
     // checkInputParams - parameter data type boolean
@@ -206,23 +206,23 @@ bool UnitTestParsingRequestParams::run() {
 
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams3 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams3 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams3 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams3 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams3 error.message", sErrorMessage, "DATATYPE_OF_PARAMETER_EXPECTED_BOOLEAN");
+        compare("checkInputParams3 error.message", sErrorMessage, "DATATYPE_OF_PARAMETER_EXPECTED_BOOLEAN");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams3 error.code", nErrorCode, 400);
+        compare("checkInputParams3 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams3 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams3 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams3 error.context.param_name", sErrorContextParamName, "public");
+        compare("checkInputParams3 error.context.param_name", sErrorContextParamName, "public");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams3 id", sId, "id1");
+        compare("checkInputParams3 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams3 method", sMethod, "game_create");
+        compare("checkInputParams3 method", sMethod, "game_create");
     }
 
     // checkInputParams - parameter data type json
@@ -242,23 +242,23 @@ bool UnitTestParsingRequestParams::run() {
         jsonRequest["params"]["custom"] = "some";
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams4 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams4 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams4 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams4 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams4 error.message", sErrorMessage, "DATATYPE_OF_PARAMETER_EXPECTED_JSON_OBJECT");
+        compare("checkInputParams4 error.message", sErrorMessage, "DATATYPE_OF_PARAMETER_EXPECTED_JSON_OBJECT");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams4 error.code", nErrorCode, 400);
+        compare("checkInputParams4 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams4 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams4 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams4 error.context.param_name", sErrorContextParamName, "custom");
+        compare("checkInputParams4 error.context.param_name", sErrorContextParamName, "custom");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams4 id", sId, "id1");
+        compare("checkInputParams4 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams4 method", sMethod, "game_create");
+        compare("checkInputParams4 method", sMethod, "game_create");
     }
 
     // checkInputParams - extra field
@@ -280,23 +280,23 @@ bool UnitTestParsingRequestParams::run() {
         jsonRequest["params"]["ollala"] = "some";
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams5 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams5 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams5 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams5 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams5 error.message", sErrorMessage, "EXTRA_PARAMETER_FOUND");
+        compare("checkInputParams5 error.message", sErrorMessage, "EXTRA_PARAMETER_FOUND");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams5 error.code", nErrorCode, 400);
+        compare("checkInputParams5 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams5 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams5 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams5 error.context.param_name", sErrorContextParamName, "ollala");
+        compare("checkInputParams5 error.context.param_name", sErrorContextParamName, "ollala");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams5 id", sId, "id1");
+        compare("checkInputParams5 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams5 method", sMethod, "game_create");
+        compare("checkInputParams5 method", sMethod, "game_create");
     }
 
     // checkInputParams - string validator
@@ -316,26 +316,26 @@ bool UnitTestParsingRequestParams::run() {
         jsonRequest["params"]["custom"] = nlohmann::json::object();
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams6 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams6 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams6 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams6 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams6 error.message", sErrorMessage, "INVALID_PARAM_STRING_VALUE");
+        compare("checkInputParams6 error.message", sErrorMessage, "INVALID_PARAM_STRING_VALUE");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams6 error.code", nErrorCode, 400);
+        compare("checkInputParams6 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams6 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams6 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams6 error.context.param_name", sErrorContextParamName, "uuid1");
+        compare("checkInputParams6 error.context.param_name", sErrorContextParamName, "uuid1");
         std::string sErrorContextDescription = jsonResponse["error"]["context"]["description"];
-        compareS(bTestSuccess, "checkInputParams6 error.context.description", sErrorContextDescription,
+        compare("checkInputParams6 error.context.description", sErrorContextDescription,
             "uuid - Value must match regular expression ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams6 id", sId, "id1");
+        compare("checkInputParams6 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams6 method", sMethod, "game_create");
+        compare("checkInputParams6 method", sMethod, "game_create");
     }
 
     // checkInputParams - int validator
@@ -355,26 +355,26 @@ bool UnitTestParsingRequestParams::run() {
         jsonRequest["params"]["custom"] = nlohmann::json::object();
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams7 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams7 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams7 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams7 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams7 error.message", sErrorMessage, "INVALID_PARAM_INTEGER_VALUE");
+        compare("checkInputParams7 error.message", sErrorMessage, "INVALID_PARAM_INTEGER_VALUE");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams7 error.code", nErrorCode, 400);
+        compare("checkInputParams7 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams7 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams7 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams7 error.context.param_name", sErrorContextParamName, "cost");
+        compare("checkInputParams7 error.context.param_name", sErrorContextParamName, "cost");
         std::string sErrorContextDescription = jsonResponse["error"]["context"]["description"];
-        compareS(bTestSuccess, "checkInputParams7 error.context.description", sErrorContextDescription,
+        compare("checkInputParams7 error.context.description", sErrorContextDescription,
             "Value must be more or equal then 3");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams7 id", sId, "id1");
+        compare("checkInputParams7 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams7 method", sMethod, "game_create");
+        compare("checkInputParams7 method", sMethod, "game_create");
     }
 
     // checkInputParams - json validator
@@ -394,28 +394,32 @@ bool UnitTestParsingRequestParams::run() {
         jsonRequest["params"]["custom"] = nlohmann::json::object();
         std::string sRequest = jsonRequest.dump();
         WsjcppJsonRpc20Request *pRequest = new WsjcppJsonRpc20Request(pClient, pWebSocketServer);
-        compareB(bTestSuccess, "checkInputParams8 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
-        compareB(bTestSuccess, "checkInputParams8 result", pRequest->checkInputParams(vParamsDef), false);
+        compare("checkInputParams8 parseIncomeData", pRequest->parseIncomeData(sRequest), true);
+        compare("checkInputParams8 result", pRequest->checkInputParams(vParamsDef), false);
         std::string sResponse = pFakeClient->getLastTextMessage();
         // std::cout << "sResponse = " << sResponse << std::endl;
         nlohmann::json jsonResponse = nlohmann::json::parse(sResponse);
         std::string sErrorMessage = jsonResponse["error"]["message"];
-        compareS(bTestSuccess, "checkInputParams8 error.message", sErrorMessage, "INVALID_PARAM_JSON_VALUE");
+        compare("checkInputParams8 error.message", sErrorMessage, "INVALID_PARAM_JSON_VALUE");
         int nErrorCode = jsonResponse["error"]["code"];
-        compareN(bTestSuccess, "checkInputParams8 error.code", nErrorCode, 400);
+        compare("checkInputParams8 error.code", nErrorCode, 400);
         std::string sErrorContextMethod = jsonResponse["error"]["context"]["method"];
-        compareS(bTestSuccess, "checkInputParams8 error.context.method", sErrorContextMethod, "game_create");
+        compare("checkInputParams8 error.context.method", sErrorContextMethod, "game_create");
         std::string sErrorContextParamName = jsonResponse["error"]["context"]["param_name"];
-        compareS(bTestSuccess, "checkInputParams8 error.context.param_name", sErrorContextParamName, "custom");
+        compare("checkInputParams8 error.context.param_name", sErrorContextParamName, "custom");
         std::string sErrorContextDescription = jsonResponse["error"]["context"]["description"];
-        compareS(bTestSuccess, "checkInputParams8 error.context.description", sErrorContextDescription,
+        compare("checkInputParams8 error.context.description", sErrorContextDescription,
             "Expected subname in struct");
         std::string sId = jsonResponse["id"];
-        compareS(bTestSuccess, "checkInputParams8 id", sId, "id1");
+        compare("checkInputParams8 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
-        compareS(bTestSuccess, "checkInputParams8 method", sMethod, "game_create");
+        compare("checkInputParams8 method", sMethod, "game_create");
     }
-
-    return bTestSuccess;
 }
 
+// ---------------------------------------------------------------------
+
+bool UnitTestParsingRequestParams::doAfterTest() {
+    // nothing
+    return true;
+}
