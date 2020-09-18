@@ -34,9 +34,9 @@ public:
 
     ~PyCodeLine() {
         if (m_pParent == NULL) {
-            std::cout << "destruct root \n";
+            // std::cout << "destruct root \n";
         } else {
-            std::cout << "destruct something else [" << m_sLine << "]\n";
+            // std::cout << "destruct something else [" << m_sLine << "]\n";
         }
     }
 
@@ -86,6 +86,7 @@ public:
 
     ~PyCodeBuilder() {
         // std::cout << "destruct something else [" << m_pCurr->getLine() << "]\n";
+        delete m_pCurr;
     }
 
     PyCodeBuilder &add(const std::string &sLine) {
@@ -429,7 +430,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportInitPy() {
     WsjcppLog::info(TAG, "Prepare __init__.py " + sFilename);
     std::ofstream __init__;
     __init__.open (sFilename);
-    __init__ << "from ." << m_sClassName << " import *\n";
+    __init__ << "from ." << m_sClassName << " import " << m_sClassName << "\n";
     WsjcppLog::ok(TAG, "Done: " + sFilename);
     return true;
 }
@@ -534,7 +535,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             .add("return self.__token")
             .end()
         .sub("def setToken(self, token):")
-            .sub("if self.__token == None:")
+            .sub("if self.__token is None:")
                 .add("self.__token = token")
                 .end()
             .sub("else:")
@@ -551,11 +552,11 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             .end()
         .add("")
         .sub("def receiveIncomingMesssages(self):")
-            .sub("if self.__ws == None:")
+            .sub("if self.__ws is None:")
                 .add("return None # TODO has not connection")
                 .end()
             .sub("while True:")
-                .sub("if self.__ws == None:")
+                .sub("if self.__ws is None:")
                     .add("return None # TODO has not connection")
                     .end()
                 .add("ready = select.select([self.__ws], [], [], 1)")
@@ -586,7 +587,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             .add("max_time = 5*10 # 5 seconds")
             .add("counter_time = 0")
             .sub("while True:")
-                .sub("if self.__ws == None:")
+                .sub("if self.__ws is None:")
                     .add("return None # TODO has not connection")
                     .end()
                 .sub("for inmsg in self.__incomingMesssages:")
@@ -651,7 +652,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
     // prepare login / logoff
     builder
         .sub("def preprocessIncomeJson(self, jsonIn):")
-            .sub("if jsonIn == None:")
+            .sub("if jsonIn is None:")
                 .add("return jsonIn")
                 .end()
     ;
@@ -746,7 +747,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             std::string sParamName = paramDef.getName();
             if (paramDef.isRequired()) {
                 builder
-                .sub("if " + sParamName + " == None: ")
+                .sub("if " + sParamName + " is None: ")
                     .add("raise Exception('Parameter \"" + sParamName + "\" expected (lib: " + m_sClassName + "." + sMethod + ")')")
                     .end();
                 exportCliPythonAddCheckDataTypeOfParam(builder, paramDef, m_sClassName, sMethod);
