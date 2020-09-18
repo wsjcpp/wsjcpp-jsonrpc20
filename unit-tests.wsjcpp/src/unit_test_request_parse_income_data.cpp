@@ -39,6 +39,7 @@ void UnitTestRequestParseIncomeData::executeTest() {
         compareS("parseIncomeData empty. id", sId, "unknown_id");
         std::string sMethod = jsonResponse["method"];
         compareS("parseIncomeData empty. method", sMethod, "unknown_method");
+        delete pRequest;
     }
     
     // missing 'id' in request
@@ -60,6 +61,7 @@ void UnitTestRequestParseIncomeData::executeTest() {
         compareS("parseIncomeData missing id. id", sId, "unknown_id");
         std::string sMethod = jsonResponse["method"];
         compareS("parseIncomeData missing id. method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // missing 'method' in request
@@ -82,6 +84,7 @@ void UnitTestRequestParseIncomeData::executeTest() {
         compareS("parseIncomeData missing method. id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compareS("parseIncomeData missing method. method", sMethod, "unknown_method");
+        delete pRequest;
     }
 
     // missing 'jsonrpc' in request
@@ -104,6 +107,7 @@ void UnitTestRequestParseIncomeData::executeTest() {
         compareS("parseIncomeData missing jsonrpc. id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compareS("parseIncomeData missing jsonrpc. method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // field 'jsonrpc' is non string in request
@@ -127,6 +131,7 @@ void UnitTestRequestParseIncomeData::executeTest() {
         compareS("parseIncomeData jsonrpc is non string. id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compareS("parseIncomeData jsonrpc is non string. method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // field 'jsonrpc' is no "2.0" in request
@@ -150,6 +155,7 @@ void UnitTestRequestParseIncomeData::executeTest() {
         compareS("parseIncomeData jsonrpc is no 2.0. id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compareS("parseIncomeData jsonrpc is no 2.0. method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // field 'params' wrong
@@ -174,6 +180,7 @@ void UnitTestRequestParseIncomeData::executeTest() {
         compareS("parseIncomeData field params wrong. id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compareS("parseIncomeData field params wrong. method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // success parsing
@@ -189,7 +196,11 @@ void UnitTestRequestParseIncomeData::executeTest() {
         compareB("parseIncomeData success parsing", pRequest->parseIncomeData(sRequest), true);
         std::string sResponse = pFakeClient->getLastTextMessage();
         compareS("parseIncomeData success parsing. error must be empty", sResponse, "");
+        delete pRequest;
     }
+
+    delete pWebSocketServer;
+    delete pFakeClient;
 }
 
 // ---------------------------------------------------------------------

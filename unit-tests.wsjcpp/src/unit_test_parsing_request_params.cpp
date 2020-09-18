@@ -124,6 +124,7 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams0 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams0 method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // checkInputParams - paramer datatype string
@@ -155,6 +156,7 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams1 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams1 method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // checkInputParams - parameter data type int
@@ -186,6 +188,7 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams2 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams2 method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // checkInputParams - parameter data type boolean
@@ -223,6 +226,7 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams3 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams3 method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // checkInputParams - parameter data type json
@@ -259,6 +263,7 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams4 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams4 method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // checkInputParams - extra field
@@ -297,6 +302,7 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams5 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams5 method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // checkInputParams - string validator
@@ -336,6 +342,7 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams6 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams6 method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // checkInputParams - int validator
@@ -375,6 +382,7 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams7 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams7 method", sMethod, "game_create");
+        delete pRequest;
     }
 
     // checkInputParams - json validator
@@ -414,7 +422,12 @@ void UnitTestParsingRequestParams::executeTest() {
         compare("checkInputParams8 id", sId, "id1");
         std::string sMethod = jsonResponse["method"];
         compare("checkInputParams8 method", sMethod, "game_create");
+        delete pRequest;
     }
+
+    delete pHandlergameCreate;
+    delete pWebSocketServer;
+    delete pFakeClient;
 }
 
 // ---------------------------------------------------------------------
