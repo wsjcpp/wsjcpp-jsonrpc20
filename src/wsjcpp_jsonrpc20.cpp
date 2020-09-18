@@ -1029,9 +1029,6 @@ bool WsjcppJsonRpc20Request::checkInputParams(const std::vector<WsjcppJsonRpc20P
                         return false;
                     }
                 }
-
-                const std::vector<WsjcppValidatorJsonBase *> &listOfJsonValidators();
-
             }
         }
     }
