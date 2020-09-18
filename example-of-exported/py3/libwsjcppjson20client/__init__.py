@@ -1,1 +1,1 @@
-from .SomeClient import *
+from .SomeClient import SomeClient

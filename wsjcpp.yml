@@ -1,5 +1,5 @@
 name: "wsjcpp-jsonrpc20"
-version: "v0.0.2"
+version: v0.0.3
 cmake_minimum_required: "3.0"
 cmake_cxx_standard: "11"
 description: "Implementation of JsonRPC 2.0"
@@ -14,7 +14,7 @@ keywords:
 
 dependencies:
   - name: "wsjcpp-core"
-    version: "v0.1.7"
+    version: "v0.2.0"
     url: "https://github.com/wsjcpp/wsjcpp-core:master"
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_core"
@@ -53,4 +53,8 @@ unit-tests:
     - name: "JsonRpc20ParamDef"
       description: "Test"
     - name: "RequestServerApi"
+      description: ""
+    - name: "ParsingRequestParams"
+      description: ""
+    - name: "RequestParseIncomeData"
       description: ""

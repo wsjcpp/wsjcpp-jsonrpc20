@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(unit-tests C CXX)
-add_definitions(-DWSJCPP_APP_VERSION="ut-v0.0.2")
+add_definitions(-DWSJCPP_APP_VERSION="ut-v0.0.3")
 add_definitions(-DWSJCPP_APP_NAME="unit-tests-wsjcpp-jsonrpc20")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -19,7 +19,7 @@ set (WSJCPP_SOURCES "")
 find_package(Threads REQUIRED)
 list (APPEND WSJCPP_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
-# wsjcpp-core:v0.1.7
+# wsjcpp-core:v0.2.0
 list (APPEND WSJCPP_INCLUDE_DIRS "../src.wsjcpp/wsjcpp_core/")
 list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_core/wsjcpp_core.cpp")
 list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_core/wsjcpp_core.h")
@@ -38,7 +38,7 @@ list (APPEND WSJCPP_INCLUDE_DIRS "../src.wsjcpp/wsjcpp_validators/")
 list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_validators/wsjcpp_validators.h")
 list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_validators/wsjcpp_validators.cpp")
 
-# wsjcpp-jsonrpc20:v0.0.2
+# wsjcpp-jsonrpc20:v0.0.3
 list (APPEND WSJCPP_INCLUDE_DIRS "../src")
 list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20.h")
 list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20.cpp")
@@ -53,6 +53,10 @@ list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_json_rpc20_param
 list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_json_rpc20_param_def.cpp")
 list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_request_server_api.h")
 list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_request_server_api.cpp")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_parsing_request_params.h")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_parsing_request_params.cpp")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_request_parse_income_data.h")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_request_parse_income_data.cpp")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.user-custom.txt)
 

@@ -10,17 +10,22 @@
 // ---------------------------------------------------------------------
 // WsjcppJsonRpc20Error
 
-// must be this json:
-// {"jsonrpc": "2.0", "error": {"code": -32600, "message": "Invalid Request."}, "id": null}
 class WsjcppJsonRpc20Error {
     public:
-        WsjcppJsonRpc20Error(int nErrorCode, const std::string &sErrorMessage);
-        int getErrorCode();
-        std::string getErrorMessage();
+        // WsjcppJsonRpc20Error(int nErrorCode, const std::string &sErrorMessage);
+        WsjcppJsonRpc20Error(
+            int nErrorCode,
+            const std::string &sErrorMessage,
+            const std::vector<std::pair<std::string,std::string>> &vErrorContext = {}
+        );
+        int getErrorCode() const;
+        std::string getErrorMessage() const;
+        const std::vector<std::pair<std::string,std::string>> &getErrorContext() const;
         nlohmann::json toJson();
     private:
         std::string m_sErrorMessage;
         int m_nErrorCode;
+        std::vector<std::pair<std::string,std::string>> m_vErrorContext;
 };
 
 // ---------------------------------------------------------------------
@@ -133,6 +138,10 @@ class FakeWebSocketClient : public WsjcppJsonRpc20WebSocketClient {
             return m_sLastTextMessage;
         }
 
+        void clearLastTextMessage() {
+            m_sLastTextMessage = "";
+        }
+
     private:
         std::string m_sLastTextMessage;
 };
@@ -161,10 +170,8 @@ class WsjcppJsonRpc20WebSocketServer {
         std::map<void *, WsjcppJsonRpc20WebSocketClient *> m_mapClients;
 };
 
-/*! 
- * WsjcppJsonRpc20ParamDef - helper api for define input params and descrip it for docs.
- * */
-// {"jsonrpc": "2.0", "method": "subtract", "params": {"subtrahend": 23, "minuend": 42}, "id": 3}
+// ---------------------------------------------------------------------
+// WsjcppJsonRpc20ParamDef - helper api for define input params and descrip it for docs.
 
 class WsjcppJsonRpc20ParamDef {
     public:
@@ -243,9 +250,13 @@ class WsjcppJsonRpc20Request {
         bool hasInputParam(const std::string &sParamName);
         std::string getInputString(const std::string &sParamName, const std::string &sDefaultValue);
         int getInputInteger(const std::string &sParamName, int defaultValue);
+        bool getInputBoolean(const std::string &sParamName, bool defaultValue);
+        nlohmann::json getInputJson(const std::string &sParamName, nlohmann::json defaultValue);
         
         std::string getId();
-        std::string getMethod();
+        std::string getMethodName();
+
+        bool checkInputParams(const std::vector<WsjcppJsonRpc20ParamDef>& vParamDef);
 
         void done(nlohmann::json& jsonResponseResult);
         void fail(WsjcppJsonRpc20Error error);
@@ -256,8 +267,9 @@ class WsjcppJsonRpc20Request {
         WsjcppJsonRpc20WebSocketServer *m_pServer;
 
         nlohmann::json m_jsonRequest;
+        nlohmann::json m_jsonParams;
         std::string m_sId;
-        std::string m_sMethod;
+        std::string m_sMethodName;
         bool m_bResponseSend;
 };
 
@@ -276,11 +288,8 @@ class WsjcppJsonRpc20HandlerBase {
         bool haveUserAccess() const;
         bool haveTesterAccess() const;
         bool haveAdminAccess() const;
-        bool checkAccess(
-            WsjcppJsonRpc20Request *pRequest,
-            WsjcppJsonRpc20Error& error
-        ) const;
-        const std::vector<WsjcppJsonRpc20ParamDef> &inputs();
+        bool checkAccess(WsjcppJsonRpc20Request *pRequest) const;
+        const std::vector<WsjcppJsonRpc20ParamDef> &getParamsDef();
 
         virtual void handle(WsjcppJsonRpc20Request *pRequest) = 0;
         
@@ -308,8 +317,7 @@ class WsjcppJsonRpc20HandlerBase {
     private:
         void validateParamName(const std::string &sName);
 
-        std::vector<WsjcppJsonRpc20ParamDef> m_vInputs; // TODO rename to m_vParams to std::map
-        // std::map<std::string, WsjcppJsonRpc20ParamDef*> *m_vWsjcppJsonRpc20ParamDefs;
+        std::vector<WsjcppJsonRpc20ParamDef> m_vParamsDef;
         std::string m_sActivatedFromVersion;
         std::string m_sDeprecatedFromVersion;
         bool m_bAccessUnauthorized;
