@@ -20,7 +20,8 @@ $ wsjcpp install https://github.com/wsjcpp/wsjcpp-jsonrpc20:master
 ### Include files
 
 * src.wsjcpp/nlohmann_json/json.hpp
-* src.wsjcpp/wsjcpp_core.h
+* src.wsjcpp/wsjcpp_core/wsjcpp_core.h
+* src.wsjcpp/wsjcpp_core/wsjcpp_core.cpp
 * src.wsjcpp/wsjcpp_validators/wsjcpp_validators.h
 * src.wsjcpp/wsjcpp_validators/wsjcpp_validators.cpp
 * src/wsjcpp_jsonrpc20.h

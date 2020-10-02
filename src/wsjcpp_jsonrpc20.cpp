@@ -475,6 +475,13 @@ void WsjcppJsonRpc20WebSocketServer::sendMessageToOne(WsjcppJsonRpc20WebSocketCl
 // ---------------------------------------------------------------------
 // WsjcppJsonRpc20ParamDef
 
+WsjcppJsonRpc20ParamDef::WsjcppJsonRpc20ParamDef() {
+    TAG = "WsjcppJsonRpc20ParamDef";
+    m_bRequired = true;
+}
+
+// ---------------------------------------------------------------------
+
 WsjcppJsonRpc20ParamDef::WsjcppJsonRpc20ParamDef(const std::string &sName, const std::string &sDescription) 
     : WsjcppJsonRpc20ParamDef()
 {
@@ -496,23 +503,18 @@ WsjcppJsonRpc20ParamDef::WsjcppJsonRpc20ParamDef(const std::string &sName, const
     }
 }
 
-// ---------------------------------------------------------------------
-
-WsjcppJsonRpc20ParamDef::WsjcppJsonRpc20ParamDef() {
-    TAG = "WsjcppJsonRpc20ParamDef";
-}
 
 // ---------------------------------------------------------------------
 
 WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::optional() {
-    m_sRestrict = "optional";
+    m_bRequired = false;
     return *this;
 }
 
 // ---------------------------------------------------------------------
 
 WsjcppJsonRpc20ParamDef & WsjcppJsonRpc20ParamDef::required() {
-    m_sRestrict = "required";
+    m_bRequired = true;
     return *this;
 }
 
@@ -569,7 +571,7 @@ nlohmann::json WsjcppJsonRpc20ParamDef::toJson() {
     nlohmann::json obj;
     obj["name"] = m_sName;
     obj["type"] = m_sType;
-    obj["restrict"] = m_sRestrict;
+    obj["restrict"] = m_bRequired ? "required" : "optional";
     obj["description"] = m_sDescription;
     // TODO validator description
     return obj;
@@ -601,14 +603,8 @@ const std::string &WsjcppJsonRpc20ParamDef::getName() const {
 
 // ---------------------------------------------------------------------
 
-const std::string &WsjcppJsonRpc20ParamDef::getRestrict() {
-    return m_sRestrict;
-}
-
-// ---------------------------------------------------------------------
-
-const std::string &WsjcppJsonRpc20ParamDef::getRestrict() const {
-    return m_sRestrict;
+const std::string WsjcppJsonRpc20ParamDef::getRestrict() const {
+    return m_bRequired ? "required" : "optional";
 }
 
 // ---------------------------------------------------------------------
@@ -626,13 +622,13 @@ const std::string &WsjcppJsonRpc20ParamDef::getDescription() const {
 // ---------------------------------------------------------------------
 
 bool WsjcppJsonRpc20ParamDef::isRequired() {
-    return m_sRestrict == "required";
+    return m_bRequired;
 }
 
 // ---------------------------------------------------------------------
 
 bool WsjcppJsonRpc20ParamDef::isOptional() {
-    return m_sRestrict == "optional";
+    return !m_bRequired;
 }
 
 // ---------------------------------------------------------------------

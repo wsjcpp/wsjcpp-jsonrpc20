@@ -190,8 +190,7 @@ class WsjcppJsonRpc20ParamDef {
         const std::string &getType() const;
         const std::string &getName();
         const std::string &getName() const;
-        const std::string &getRestrict();
-        const std::string &getRestrict() const;
+        const std::string getRestrict() const;
         const std::string &getDescription();
         const std::string &getDescription() const;
 
@@ -214,7 +213,7 @@ class WsjcppJsonRpc20ParamDef {
         std::string TAG;
         std::string m_sType;
         std::string m_sName;
-        std::string m_sRestrict;
+        bool m_bRequired;
         std::string m_sDescription;
 
         std::string JSONRPC20_PARAM_DEF_TYPE_INTEGER = "integer";
