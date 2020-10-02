@@ -12,12 +12,11 @@ keywords:
 repositories:
   - type: main
     url: "https://github.com/nlohmann/json"
-
 authors:
   - name: "Niels Lohmann"
     email: "mail@nlohmann.me"
-
 distribution:
   - source-file: "single_include/nlohmann/json.hpp"
     target-file: "json.hpp"
     type: "source-code"
+    sha1: "c2131f667113fa880110c984e2e2ca357a0d96d7"
