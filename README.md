@@ -4,10 +4,14 @@
 
 C++ Implementation for JsonRPC 2.0 (oriented on websockets)
 
+Got information about this protocol here [https://www.simple-is-better.org/json-rpc/jsonrpc20.html](https://www.simple-is-better.org/json-rpc/jsonrpc20.html)
+But used not all standart
+
 ## Features
 
 * Collect all handlers for jsonrpc20
 * Including system of define validators
+* Can generate client library on python (Include control pypi files)
 
 ## Integration
 
