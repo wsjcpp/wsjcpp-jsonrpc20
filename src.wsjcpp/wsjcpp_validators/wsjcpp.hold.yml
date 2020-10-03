@@ -13,15 +13,13 @@ keywords:
 
 required-libraries:
   - pthread
-  
+
 repositories:
   - type: main
     url: "https://github.com/wsjcpp/wsjcpp-validators"
-
 authors:
   - name: Evgenii Sopov
     email: mrseakg@gmail.com
-
 dependencies:
   - name: "wsjcpp-core"
     version: "v0.1.7"
@@ -33,14 +31,15 @@ dependencies:
     url: "https://github.com/nlohmann/json:develop"
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/nlohmann_json"
-
 distribution:
   - source-file: "src/wsjcpp_validators.h"
     target-file: "wsjcpp_validators.h"
     type: "source-code"
+    sha1: "78e7f62c964f5e36f3940e03a4c8f673feaea289"
   - source-file: "src/wsjcpp_validators.cpp"
     target-file: "wsjcpp_validators.cpp"
     type: "source-code"
+    sha1: "9f4bd5c96b74aae164e785549d72d3a3e37ca8e8"
 
 unit-tests:
   cases:

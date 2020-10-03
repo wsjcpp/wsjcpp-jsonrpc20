@@ -30,6 +30,8 @@ dependencies:
     url: "https://github.com/wsjcpp/wsjcpp-validators:master"
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_validators"
+    installation-datetime: "Sat, 03 Oct 2020 12:46:55 GMT"
+
 distribution:
   - source-file: "src/wsjcpp_jsonrpc20.h"
     target-file: "wsjcpp_jsonrpc20.h"
@@ -46,6 +48,7 @@ distribution:
   - source-file: "scripts.wsjcpp/generate.WsjcppJsonRpc20Handler"
     target-file: "generate.WsjcppJsonRpc20Handler"
     type: "safe-scripting-generate"
+
 unit-tests:
   cases:
     - name: "JsonRpc20UserSession"
