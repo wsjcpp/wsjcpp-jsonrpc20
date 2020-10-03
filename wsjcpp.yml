@@ -1,5 +1,5 @@
 name: "wsjcpp-jsonrpc20"
-version: v0.0.3
+version: v0.0.4
 cmake_minimum_required: "3.0"
 cmake_cxx_standard: "11"
 description: "Implementation of JsonRPC 2.0"
