@@ -90,5 +90,3 @@ void WsjcppJsonRpc20HandlerAuthToken::handle(WsjcppJsonRpc20Request *pRequest) {
     // TODO
     pRequest->fail(WsjcppJsonRpc20Error(501, "NOT_IMPLEMENTED"));
 }
-
-
