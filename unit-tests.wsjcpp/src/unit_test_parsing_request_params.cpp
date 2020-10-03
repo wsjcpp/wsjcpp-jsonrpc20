@@ -1,4 +1,4 @@
-#include "unit_test_parsing_request_params.h"
+#include <wsjcpp_unit_tests.h>
 #include <vector>
 #include <wsjcpp_core.h>
 #include <wsjcpp_jsonrpc20.h>
@@ -74,6 +74,15 @@ void WsjcppJsonRpc20HandlerGameCreate::handle(WsjcppJsonRpc20Request *pRequest) 
 
 // ---------------------------------------------------------------------
 // UnitTestParsingRequestParams
+
+
+class UnitTestParsingRequestParams : public WsjcppUnitTestBase {
+    public:
+        UnitTestParsingRequestParams();
+        virtual bool doBeforeTest() override;
+        virtual void executeTest() override;
+        virtual bool doAfterTest() override;
+};
 
 REGISTRY_WSJCPP_UNIT_TEST(UnitTestParsingRequestParams)
 
