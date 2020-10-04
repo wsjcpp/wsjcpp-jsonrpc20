@@ -48,6 +48,12 @@ distribution:
   - source-file: "scripts.wsjcpp/generate.WsjcppJsonRpc20Handler"
     target-file: "generate.WsjcppJsonRpc20Handler"
     type: "safe-scripting-generate"
+  - source-file: "src/wsjcpp_jsonrpc20_export_cli_webjs.h"
+    target-file: "wsjcpp_jsonrpc20_export_cli_webjs.h"
+    type: "source-code"
+  - source-file: "src/wsjcpp_jsonrpc20_export_cli_webjs.cpp"
+    target-file: "wsjcpp_jsonrpc20_export_cli_webjs.cpp"
+    type: "source-code"
 
 unit-tests:
   cases:

@@ -1,0 +1,25 @@
+{
+  "name": "libwsjcppjson20client",
+  "version": "v0.0.4",
+  "description": "SomeClient JavaScript Web Client Library for wsjcpp-jsonrpc20",
+  "main": "dist/libwsjcppjson20client.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wsjcpp/wsjcpp-jsonrpc20.git"
+  },
+  "keywords": [
+    "wsjcpp-jsonrpc20",
+    "wsjcpp",
+    "jsonrpc20",
+    "example-client-webjs"
+  ],
+  "bugs": {
+    "url": "https://github.com/wsjcpp/wsjcpp-jsonrpc20/issues"
+  },
+  "author": "Evgenii Sopov <mrseakg@gmail.com>",
+  "license": "MIT",
+  "licenses": [{
+    "type": "MIT",
+    "url": "https://raw.githubusercontent.com/wsjcpp/wsjcpp-jsonrpc20/master/LICENSE"
+  }]
+}

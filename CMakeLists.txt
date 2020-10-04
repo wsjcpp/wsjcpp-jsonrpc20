@@ -16,6 +16,8 @@ list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20.h")
 list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20.cpp")
 list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20_export_cli_python.h")
 list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20_export_cli_python.cpp")
+list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20_export_cli_webjs.h")
+list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20_export_cli_webjs.cpp")
 
 # app
 list (APPEND WSJCPP_SOURCES "src/app/main.cpp")

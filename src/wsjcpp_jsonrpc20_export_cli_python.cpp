@@ -134,7 +134,7 @@ WsjcppJsonRpc20ExportCliPython::WsjcppJsonRpc20ExportCliPython(
     m_sAuthorEmail = "unknown";
     m_sAppName = "unknown";
     m_sAppVersion = "unknown";
-    m_sClassName = "SomeClient";
+    m_sClassName = "Unknown";
     m_sUrl = "none";
 }
 

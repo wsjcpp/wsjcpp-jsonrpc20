@@ -31,7 +31,6 @@ WsjcppJsonRpc20HandlerAuthLogin::WsjcppJsonRpc20HandlerAuthLogin()
 
 void WsjcppJsonRpc20HandlerAuthLogin::handle(WsjcppJsonRpc20Request *pRequest) {
     WsjcppLog::err(TAG, "Not implemented");
-    // TODO
     pRequest->fail(WsjcppJsonRpc20Error(501, "NOT_IMPLEMENTED"));
 }
 
@@ -56,7 +55,6 @@ WsjcppJsonRpc20HandlerAuthLogoff::WsjcppJsonRpc20HandlerAuthLogoff()
 
 void WsjcppJsonRpc20HandlerAuthLogoff::handle(WsjcppJsonRpc20Request *pRequest) {
     WsjcppLog::err(TAG, "Not implemented");
-    // TODO
     pRequest->fail(WsjcppJsonRpc20Error(501, "NOT_IMPLEMENTED"));
 }
 
@@ -87,6 +85,5 @@ WsjcppJsonRpc20HandlerAuthToken::WsjcppJsonRpc20HandlerAuthToken()
 
 void WsjcppJsonRpc20HandlerAuthToken::handle(WsjcppJsonRpc20Request *pRequest) {
     WsjcppLog::err(TAG, "Not implemented");
-    // TODO
     pRequest->fail(WsjcppJsonRpc20Error(501, "NOT_IMPLEMENTED"));
 }
