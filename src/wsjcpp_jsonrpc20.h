@@ -273,6 +273,23 @@ class WsjcppJsonRpc20Request {
 };
 
 // ---------------------------------------------------------------------
+// WsjcppJsonRpc20EventBase - api handler basic class
+
+class WsjcppJsonRpc20EventBase {
+    public:
+        WsjcppJsonRpc20EventBase(const std::string &sEventName, const std::string &sDescription);
+
+    protected:
+        std::string TAG;
+        std::string m_sEventName;
+        std::string m_sDescription;
+};
+
+// Registry Wsjcpp JsonRpc20 Event Fabric
+#define REGISTRY_WSJCPP_JSONRPC20_EVENT_FABRIC( classname ) \
+    static classname * pRegistryWsjcppJsonRpc20 ## classname = new classname(); \
+
+// ---------------------------------------------------------------------
 // WsjcppJsonRpc20HandlerBase - api handler basic class
 
 class WsjcppJsonRpc20HandlerBase {
@@ -336,6 +353,8 @@ class WsjcppJsonRpc20 {
         static void initGlobalVariables();
         static void addHandler(const std::string &sName, WsjcppJsonRpc20HandlerBase* pCmdHandler);
         static WsjcppJsonRpc20HandlerBase *findJsonRpc20Handler(const std::string &sCmd);
+        static std::vector<std::string> getEventList();
+        static void registryEventFabric(const std::string &sEventName, WsjcppJsonRpc20EventBase* pEventFabric);
 };
 
 // Registry Wsjcpp JsonRpc20 Handler

@@ -28,7 +28,6 @@ WsjcppJsonRpc20ExportCliWebJs::WsjcppJsonRpc20ExportCliWebJs(
     m_sAppName = "unknown";
     m_sAppVersion = "unknown";
     m_sClassName = "Unknown";
-    m_sUrl = "none";
     
     // TODO must be WsjcppJsonRpc20::eventsList() or something like
     m_vEvents.push_back("server");

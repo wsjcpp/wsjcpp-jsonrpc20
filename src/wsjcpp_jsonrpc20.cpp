@@ -1379,6 +1379,20 @@ WsjcppJsonRpc20HandlerBase * WsjcppJsonRpc20::findJsonRpc20Handler(const std::st
 }
 
 // ---------------------------------------------------------------------
+
+std::vector<std::string> WsjcppJsonRpc20::getEventList() {
+    std::vector<std::string> vEvents;
+    // TODO
+    return vEvents;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20::registryEventFabric(const std::string &sEventName, WsjcppJsonRpc20EventBase* pEventFabric) {
+    // TODO
+}
+
+// ---------------------------------------------------------------------
 // WsjcppJsonRpc20HandlerServerApi
 
 REGISTRY_WSJCPP_JSONRPC20_HANDLER(WsjcppJsonRpc20HandlerServerApi)

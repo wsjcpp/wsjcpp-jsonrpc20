@@ -41,7 +41,8 @@ class WsjcppJsonRpc20ExportCliWebJs {
         std::vector<std::string> m_vKeywords;
         std::string m_sLicenseType;
         std::string m_sLicenseURL;
-        std::string m_sUrl;
+
+        std::string m_sSampleUrlConnection;
         
         std::vector<std::pair<std::string, std::string>> m_vMethodsForKeepAuthToken;
         std::vector<std::string> m_vMethodsForClearAuthToken;
