@@ -7,23 +7,24 @@
             var log = document.getElementById('log');
             log.innerHTML += '[' + new Date() + '] ' + n + '\r\n';
         };
+        var client = new SomeClient();
         document.addEventListener('DOMContentLoaded', function() {
-            fhq.bind('notify', function(data) {
+            client.bind('notify', function(data) {
                 log('notify: ' + JSON.stringify(data))
             });
-            fhq.bind('connected', function(data) {
+            client.bind('connected', function(data) {
                 log('connected: ' + JSON.stringify(data))
                 connecting_form.style.display = 'none';
                 login_form.style.display = '';
                 logout_form.style.display = 'none';
             });
-            fhq.bind('disconnected', function(data) {
+            client.bind('disconnected', function(data) {
                 log('disconnected: ' + JSON.stringify(data))
                 connecting_form.style.display = '';
                 login_form.style.display = 'none';
                 logout_form.style.display = 'none';
             });
-            fhq.bind('userdata', function(data) {
+            client.bind('userdata', function(data) {
                 log('userdata: ' + JSON.stringify(data))
                 login_form.style.display = 'none';
                 logout_form.style.display = '';
@@ -50,17 +51,17 @@
 <script>
     server_url.value = 'ws://' + window.location.hostname + ':1234/api-ws/'
     btn_login.onclick = function() {
-        fhq.login({email: login.value, password: password.value}).done(function(r) { 
+        client.login({email: login.value, password: password.value}).done(function(r) { 
             log('Login success, token = ' + r.token);
         }).fail(function(e) {
             log('Login failed, error = ' + e.error);
         })
     }
     btn_logout.onclick = function() {
-        fhq.deinit();
+        client.deinit();
     }
     btn_connect.onclick = function() {
-        fhq.init({'baseUrl': server_url.value});
+        client.init({'baseUrl': server_url.value});
     }
 </script>
 <pre id='log'></pre>

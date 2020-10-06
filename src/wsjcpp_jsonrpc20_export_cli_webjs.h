@@ -20,7 +20,7 @@ class WsjcppJsonRpc20ExportCliWebJs {
         void setRepository(const std::string &sRepositoryType, const std::string &sRepositoryURL);
         void setKeywords(const std::vector<std::string> &vKeywords);
         void setLicense(const std::string &sLicenseType, const std::string &sLicenseURL);
-        
+        void setDefaultConnectionString(const std::string &sDefaultConnectionString);
         bool doExportLib();
 
     private:
@@ -38,6 +38,7 @@ class WsjcppJsonRpc20ExportCliWebJs {
         std::vector<std::string> m_vKeywords;
         std::string m_sLicenseType;
         std::string m_sLicenseURL;
+        std::string m_sDefaultConnectionString;
 
         std::string m_sSampleUrlConnection;
         

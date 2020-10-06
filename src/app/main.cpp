@@ -57,8 +57,7 @@ int main(int argc, const char* argv[]) {
     exportCliWebJs.setRepository("git", "https://github.com/wsjcpp/wsjcpp-jsonrpc20.git");
     exportCliWebJs.setKeywords({std::string(WSJCPP_APP_NAME), "wsjcpp", "jsonrpc20", "example-client-webjs"});
     exportCliWebJs.setLicense("MIT", "https://raw.githubusercontent.com/wsjcpp/wsjcpp-jsonrpc20/master/LICENSE");
-    // exportCliWebJs.setUrl("https://github.com/wsjcpp/wsjcpp-jsonrpc20");
-    // exportCliWebJs.setDownloadUrl("https://github.com/wsjcpp/wsjcpp-jsonrpc20/archive/" + std::string(WSJCPP_APP_NAME) + ".tar.gz");
+    exportCliWebJs.setDefaultConnectionString("ws://localhost:1234/");
     
     // exportCliWebJs.addLoginMethod("auth_login", "token");
     // exportCliWebJs.addLoginMethod("auth_token", "token");
