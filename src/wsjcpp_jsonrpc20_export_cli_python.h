@@ -1,11 +1,11 @@
 #ifndef WSJCPP_JSONRPC20_EXPORT_CLI_PYTHON_H
 #define WSJCPP_JSONRPC20_EXPORT_CLI_PYTHON_H
 
-#include <string>
+#include "wsjcpp_jsonrpc20_export_cli_base.h"
 #include <vector>
 #include <map>
 
-class WsjcppJsonRpc20ExportCliPython {
+class WsjcppJsonRpc20ExportCliPython : public WsjcppJsonRpc20ExportCliBase {
     public:
         WsjcppJsonRpc20ExportCliPython(
             const std::string &sExportDir,
@@ -22,11 +22,8 @@ class WsjcppJsonRpc20ExportCliPython {
         void addLoginMethod(const std::string &sMethod, const std::string &sResultVarName);
         void addLogoffMethod(const std::string &sMethod);
 
-        bool doExportLib();
+        virtual bool doExportLib() override;
     private:
-        std::string TAG;
-        std::string m_sExportDir;
-        std::string m_sPackageName;
         std::string m_sAuthorName;
         std::string m_sAuthorEmail;
         std::string m_sAppName;

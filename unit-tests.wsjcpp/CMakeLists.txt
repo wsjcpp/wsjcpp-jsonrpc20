@@ -44,6 +44,8 @@ list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20_export_cli_python.h")
 list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20_export_cli_python.cpp")
 list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20_export_cli_webjs.h")
 list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20_export_cli_webjs.cpp")
+list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20_export_cli_base.h")
+list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20_export_cli_base.cpp")
 
 # unit-tests
 list (APPEND WSJCPP_INCLUDE_DIRS "src")

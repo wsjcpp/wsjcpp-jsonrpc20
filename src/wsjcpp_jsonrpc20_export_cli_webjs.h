@@ -1,10 +1,10 @@
 #ifndef WSJCPP_JSONRPC20_EXPORT_CLI_WEBJS_H
 #define WSJCPP_JSONRPC20_EXPORT_CLI_WEBJS_H
 
+#include "wsjcpp_jsonrpc20_export_cli_base.h"
 #include <vector>
-#include <string>
 
-class WsjcppJsonRpc20ExportCliWebJs {
+class WsjcppJsonRpc20ExportCliWebJs : public WsjcppJsonRpc20ExportCliBase {
     public:
         WsjcppJsonRpc20ExportCliWebJs(
             const std::string &sExportDir,
@@ -21,12 +21,10 @@ class WsjcppJsonRpc20ExportCliWebJs {
         void setKeywords(const std::vector<std::string> &vKeywords);
         void setLicense(const std::string &sLicenseType, const std::string &sLicenseURL);
         void setDefaultConnectionString(const std::string &sDefaultConnectionString);
-        bool doExportLib();
+        virtual bool doExportLib() override;
 
     private:
         std::string TAG;
-        std::string m_sExportDir;
-        std::string m_sPackageName;
         std::string m_sAuthorName;
         std::string m_sAuthorEmail;
         std::string m_sAppName;

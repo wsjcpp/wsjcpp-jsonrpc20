@@ -126,10 +126,8 @@ public:
 WsjcppJsonRpc20ExportCliPython::WsjcppJsonRpc20ExportCliPython(
     const std::string &sExportDir,
     const std::string &sPackageName
-) {
+) : WsjcppJsonRpc20ExportCliBase(sExportDir, sPackageName) {
     TAG = "WsjcppJsonRpc20ExportCliPython";
-    m_sExportDir = WsjcppCore::doNormalizePath(sExportDir);
-    m_sPackageName = sPackageName;
     m_sAuthorName = "Unknown";
     m_sAuthorEmail = "unknown";
     m_sAppName = "unknown";
@@ -235,7 +233,7 @@ bool WsjcppJsonRpc20ExportCliPython::doExportLib() {
 
 bool WsjcppJsonRpc20ExportCliPython::exportPrepareDirs() {
     std::vector<std::string> vCreateDirs;
-    std::vector<std::string> vSplited = WsjcppCore::split(m_sExportDir, "/");
+    std::vector<std::string> vSplited = WsjcppCore::split(this->getExportDir(), "/");
     std::string sExportDir = "";
     for (int i = 0; i < vSplited.size(); i++) {
         if (i > 0) {
@@ -245,7 +243,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportPrepareDirs() {
         sExportDir = WsjcppCore::doNormalizePath(sExportDir);
         vCreateDirs.push_back(sExportDir);
     }
-    sExportDir = WsjcppCore::doNormalizePath(sExportDir + "/" + m_sPackageName);
+    sExportDir = WsjcppCore::doNormalizePath(sExportDir + "/" + this->getPackageName());
     vCreateDirs.push_back(sExportDir);
 
     for (int i = 0; i < vCreateDirs.size(); i++) {
@@ -267,20 +265,20 @@ bool WsjcppJsonRpc20ExportCliPython::exportPrepareDirs() {
 // ---------------------------------------------------------------------
 
 bool WsjcppJsonRpc20ExportCliPython::prepareReadmeMdIfNeed() {
-    std::string sReadmeMd = m_sExportDir + "/README.md";
+    std::string sReadmeMd = this->getExportDir() + "/README.md";
     if (!WsjcppCore::fileExists(sReadmeMd)) {
         std::string sContentReadme = 
-            "#" + m_sPackageName + "\n\n"
+            "#" + this->getPackageName() + "\n\n"
             + m_sClassName + " Python Library for " + m_sAppName + "\n\n"
             + "## Install \n\n"
             + "```\n"
-            + "$ pip3 install " + m_sPackageName + " --upgrade\n"
+            + "$ pip3 install " + this->getPackageName() + " --upgrade\n"
             + "```\n\n"
             + "## Example code\n\n"
             + "```\n"
             + "#!/usr/bin/env python3\n"
             + "# -*- coding: utf-8 -*-\n"
-            + "from " + m_sPackageName + " import " + m_sClassName + "\n\n"
+            + "from " + this->getPackageName() + " import " + m_sClassName + "\n\n"
             + "client = " + m_sClassName + "(\"ws://host/ws-api/\")\n\n"
             + "resp = client.server_api({})\n\n"
             + "print(resp)\n"
@@ -296,7 +294,7 @@ bool WsjcppJsonRpc20ExportCliPython::prepareReadmeMdIfNeed() {
 
 bool WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
     std::ofstream setupPy;
-    std::string sFilename = m_sExportDir + "/setup.py";
+    std::string sFilename = this->getExportDir() + "/setup.py";
     WsjcppLog::info(TAG, "Prepare setup.py " + sFilename);
     
     // https://packaging.python.org/tutorials/packaging-projects/
@@ -307,9 +305,9 @@ bool WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
         "    long_description = fh.read()\n"
         "\n"
         "setuptools.setup(\n"
-        "    name='" + m_sPackageName + "',\n"
+        "    name='" + this->getPackageName() + "',\n"
         "    version='" + m_sAppVersion + "',\n"
-        "    packages=['" + m_sPackageName + "'],\n"
+        "    packages=['" + this->getPackageName() + "'],\n"
         "    install_requires=['websocket-client>=0.56.0', 'requests>=2.21.0'],\n"
         "    keywords=['" + WsjcppCore::join(m_vKeywords, "', '") + "'],\n"
         "    author='" + m_sAuthorName + "',\n"
@@ -345,7 +343,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
 bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
     
     std::ofstream apimd;
-    std::string sFilename = m_sExportDir + "/API.md";
+    std::string sFilename = this->getExportDir() + "/API.md";
     WsjcppLog::info(TAG, "Prepare API.md " + sFilename);
 
     apimd.open(sFilename);
@@ -358,7 +356,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
     apimd << "* Date: " << WsjcppCore::formatTimeForWeb(nSec) << "\n\n";
     apimd << "Example connect/disconnect:\n"
         << "```\n"
-        << "from " + m_sPackageName + " import " + m_sClassName + " \n\n"
+        << "from " + getPackageName() + " import " + m_sClassName + " \n\n"
         << "client = " + m_sClassName + "('ws://host:1234')\n"
         << " ... \n"
         << "client.close()\n"
@@ -426,7 +424,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
 // ---------------------------------------------------------------------
 
 bool WsjcppJsonRpc20ExportCliPython::exportInitPy() {
-    std::string sFilename = m_sExportDir + "/" + m_sPackageName + "/__init__.py";
+    std::string sFilename = this->getExportDir() + "/" + this->getPackageName() + "/__init__.py";
     WsjcppLog::info(TAG, "Prepare __init__.py " + sFilename);
     std::ofstream __init__;
     __init__.open (sFilename);
@@ -470,8 +468,10 @@ void exportCliPythonAddCheckDataTypeOfParam(
     }
 };
 
+// ---------------------------------------------------------------------
+
 bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
-    std::string sFilename = m_sExportDir + "/" + m_sPackageName + "/" + m_sClassName + ".py";
+    std::string sFilename = this->getExportDir() + "/" + this->getPackageName() + "/" + m_sClassName + ".py";
     WsjcppLog::info(TAG, "Prepare " + m_sClassName + ".py: " + sFilename);
 
     std::ofstream clientpy;
@@ -534,6 +534,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
         .sub("def getToken(self):")
             .add("return self.__token")
             .end()
+        .add("")
         .sub("def setToken(self, token):")
             .sub("if self.__token is None:")
                 .add("self.__token = token")

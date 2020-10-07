@@ -6,9 +6,11 @@ description: "Implementation of JsonRPC 2.0"
 authors:
   - name: "Evgenii Sopov"
     email: "mrseakg@gmail.com"
+
 origins:
   - address: "https://sea-kg.com/wsjcpp-package-registry/"
     type: "package-registry"
+
 keywords:
   - "c++"
 
@@ -53,6 +55,12 @@ distribution:
     type: "source-code"
   - source-file: "src/wsjcpp_jsonrpc20_export_cli_webjs.cpp"
     target-file: "wsjcpp_jsonrpc20_export_cli_webjs.cpp"
+    type: "source-code"
+  - source-file: "src/wsjcpp_jsonrpc20_export_cli_base.h"
+    target-file: "wsjcpp_jsonrpc20_export_cli_base.h"
+    type: "source-code"
+  - source-file: "src/wsjcpp_jsonrpc20_export_cli_base.cpp"
+    target-file: "wsjcpp_jsonrpc20_export_cli_base.cpp"
     type: "source-code"
 
 unit-tests:
