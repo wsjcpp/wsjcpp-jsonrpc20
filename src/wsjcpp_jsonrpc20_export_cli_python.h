@@ -13,8 +13,6 @@ class WsjcppJsonRpc20ExportCliPython : public WsjcppJsonRpc20ExportCliBase {
         );
         void setAuthorName(const std::string &sAuthorName);
         void setAuthorEmail(const std::string &sAuthorEmail);
-        void setAppName(const std::string &sAppName);
-        void setAppVersion(const std::string &sAppVersion);
         void setClassName(const std::string &sClassName);
         void setUrl(const std::string &sUrl);
         void setDownloadUrl(const std::string &sDownloadUrl);
@@ -26,8 +24,6 @@ class WsjcppJsonRpc20ExportCliPython : public WsjcppJsonRpc20ExportCliBase {
     private:
         std::string m_sAuthorName;
         std::string m_sAuthorEmail;
-        std::string m_sAppName;
-        std::string m_sAppVersion;
         std::string m_sClassName;
         std::string m_sUrl;
         std::string m_sDownloadUrl;

@@ -37,3 +37,30 @@ std::string WsjcppJsonRpc20ExportCliBase::getPackageName() const {
 }
 
 // ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::setAppName(const std::string &sAppName) {
+    m_sAppName = sAppName;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20ExportCliBase::getAppName() const {
+    return m_sAppName;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::setAppVersion(const std::string &sAppVersion) {
+    // https://www.python.org/dev/peps/pep-0440/
+    // [N!]N(.N)*[{a|b|rc}N][.postN][.devN]
+    // TODO regexp 
+    m_sAppVersion = sAppVersion;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20ExportCliBase::getAppVersion() const {
+    return m_sAppVersion;
+}
+
+// ---------------------------------------------------------------------
