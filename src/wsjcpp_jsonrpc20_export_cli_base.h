@@ -18,6 +18,12 @@ class WsjcppJsonRpc20ExportCliBase {
         std::string getAppName() const;
         void setAppVersion(const std::string &sAppVersion);
         std::string getAppVersion() const;
+        void setAuthorName(const std::string &sAuthorName);
+        std::string getAuthorName() const;
+        void setAuthorEmail(const std::string &sAuthorEmail);
+        std::string getAuthorEmail() const;
+        void setClassName(const std::string &sClassName);
+        std::string getClassName() const;
 
         virtual bool doExportLib() = 0;
 
@@ -29,6 +35,11 @@ class WsjcppJsonRpc20ExportCliBase {
         std::string m_sPackageName;
         std::string m_sAppName;
         std::string m_sAppVersion;
+
+        std::string m_sClassName;
+        std::string m_sAuthorName;
+        std::string m_sAuthorEmail;
+
 };
 
 #endif //  WSJCPP_JSONRPC20_EXPORT_CLI_BASE_H

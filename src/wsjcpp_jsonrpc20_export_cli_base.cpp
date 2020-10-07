@@ -22,6 +22,11 @@ WsjcppJsonRpc20ExportCliBase::WsjcppJsonRpc20ExportCliBase(
     TAG = "WsjcppJsonRpc20ExportCliBase";
     m_sExportDir = WsjcppCore::doNormalizePath(sExportDir);
     m_sPackageName = sPackageName;
+    m_sAppName = "unknown";
+    m_sAppVersion = "unknown";
+    m_sAuthorName = "Unknown";
+    m_sAuthorEmail = "unknown";
+    m_sClassName = "Unknown";
 }
 
 // ---------------------------------------------------------------------
@@ -61,6 +66,42 @@ void WsjcppJsonRpc20ExportCliBase::setAppVersion(const std::string &sAppVersion)
 
 std::string WsjcppJsonRpc20ExportCliBase::getAppVersion() const {
     return m_sAppVersion;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::setAuthorName(const std::string &sAuthorName) {
+    m_sAuthorName = sAuthorName;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20ExportCliBase::getAuthorName() const {
+    return m_sAuthorName;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::setAuthorEmail(const std::string &sAuthorEmail) {
+    m_sAuthorEmail = sAuthorEmail;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20ExportCliBase::getAuthorEmail() const {
+    return m_sAuthorEmail;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::setClassName(const std::string &sClassName) {
+    m_sClassName = sClassName;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20ExportCliBase::getClassName() const {
+    return m_sClassName;
 }
 
 // ---------------------------------------------------------------------

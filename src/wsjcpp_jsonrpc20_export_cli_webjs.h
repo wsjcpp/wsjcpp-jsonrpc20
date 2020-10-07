@@ -10,10 +10,7 @@ class WsjcppJsonRpc20ExportCliWebJs : public WsjcppJsonRpc20ExportCliBase {
             const std::string &sExportDir,
             const std::string &sPackageName
         );
-        void setAuthorName(const std::string &sAuthorName);
-        void setAuthorEmail(const std::string &sAuthorEmail);
         // TODO homepage
-        void setClassName(const std::string &sClassName);
         void setIssuesURL(const std::string &sIssuesURL);
         void setRepository(const std::string &sRepositoryType, const std::string &sRepositoryURL);
         void setKeywords(const std::vector<std::string> &vKeywords);
@@ -23,9 +20,6 @@ class WsjcppJsonRpc20ExportCliWebJs : public WsjcppJsonRpc20ExportCliBase {
 
     private:
         std::string TAG;
-        std::string m_sAuthorName;
-        std::string m_sAuthorEmail;
-        std::string m_sClassName;
         std::string m_sIssuesURL;
         std::string m_sRepositoryType;
         std::string m_sRepositoryURL;

@@ -11,9 +11,6 @@ class WsjcppJsonRpc20ExportCliPython : public WsjcppJsonRpc20ExportCliBase {
             const std::string &sExportDir,
             const std::string &sPackageName
         );
-        void setAuthorName(const std::string &sAuthorName);
-        void setAuthorEmail(const std::string &sAuthorEmail);
-        void setClassName(const std::string &sClassName);
         void setUrl(const std::string &sUrl);
         void setDownloadUrl(const std::string &sDownloadUrl);
         void setKeywords(const std::vector<std::string> &vKeywords);
@@ -22,9 +19,7 @@ class WsjcppJsonRpc20ExportCliPython : public WsjcppJsonRpc20ExportCliBase {
 
         virtual bool doExportLib() override;
     private:
-        std::string m_sAuthorName;
-        std::string m_sAuthorEmail;
-        std::string m_sClassName;
+
         std::string m_sUrl;
         std::string m_sDownloadUrl;
         std::vector<std::string> m_vKeywords;
