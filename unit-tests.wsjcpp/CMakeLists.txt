@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(unit-tests C CXX)
-add_definitions(-DWSJCPP_APP_VERSION="ut-v0.0.4")
+add_definitions(-DWSJCPP_APP_VERSION="ut-v0.0.5")
 add_definitions(-DWSJCPP_APP_NAME="unit-tests-wsjcpp-jsonrpc20")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -36,7 +36,7 @@ list (APPEND WSJCPP_INCLUDE_DIRS "../src.wsjcpp/wsjcpp_validators/")
 list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_validators/wsjcpp_validators.h")
 list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_validators/wsjcpp_validators.cpp")
 
-# wsjcpp-jsonrpc20:v0.0.4
+# wsjcpp-jsonrpc20:v0.0.5
 list (APPEND WSJCPP_INCLUDE_DIRS "../src")
 list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20.h")
 list (APPEND WSJCPP_SOURCES "../src/wsjcpp_jsonrpc20.cpp")
