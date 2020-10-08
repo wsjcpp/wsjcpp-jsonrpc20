@@ -40,7 +40,6 @@ WsjcppJsonRpc20HandlerGameCreate::WsjcppJsonRpc20HandlerGameCreate()
 
 void WsjcppJsonRpc20HandlerGameCreate::handle(WsjcppJsonRpc20Request *pRequest) {
     WsjcppLog::err(TAG, "Not implemented");
-    // TODO
     pRequest->fail(WsjcppJsonRpc20Error(501, "NOT_IMPLEMENTED"));
 }
 

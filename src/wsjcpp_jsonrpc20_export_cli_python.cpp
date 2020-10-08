@@ -126,49 +126,9 @@ public:
 WsjcppJsonRpc20ExportCliPython::WsjcppJsonRpc20ExportCliPython(
     const std::string &sExportDir,
     const std::string &sPackageName
-) {
+) : WsjcppJsonRpc20ExportCliBase(sExportDir, sPackageName) {
     TAG = "WsjcppJsonRpc20ExportCliPython";
-    m_sExportDir = WsjcppCore::doNormalizePath(sExportDir);
-    m_sPackageName = sPackageName;
-    m_sAuthorName = "Unknown";
-    m_sAuthorEmail = "unknown";
-    m_sAppName = "unknown";
-    m_sAppVersion = "unknown";
-    m_sClassName = "SomeClient";
     m_sUrl = "none";
-}
-
-// ---------------------------------------------------------------------
-
-void WsjcppJsonRpc20ExportCliPython::setAuthorName(const std::string &sAuthorName) {
-    m_sAuthorName = sAuthorName;
-}
-
-// ---------------------------------------------------------------------
-
-void WsjcppJsonRpc20ExportCliPython::setAuthorEmail(const std::string &sAuthorEmail) {
-    m_sAuthorEmail = sAuthorEmail;
-}
-
-// ---------------------------------------------------------------------
-
-void WsjcppJsonRpc20ExportCliPython::setAppName(const std::string &sAppName) {
-    m_sAppName = sAppName;
-}
-
-// ---------------------------------------------------------------------
-
-void WsjcppJsonRpc20ExportCliPython::setAppVersion(const std::string &sAppVersion) {
-    // https://www.python.org/dev/peps/pep-0440/
-    // [N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-    // TODO regexp 
-    m_sAppVersion = sAppVersion;
-}
-
-// ---------------------------------------------------------------------
-
-void WsjcppJsonRpc20ExportCliPython::setClassName(const std::string &sClassName) {
-    m_sClassName = sClassName;
 }
 
 // ---------------------------------------------------------------------
@@ -235,7 +195,7 @@ bool WsjcppJsonRpc20ExportCliPython::doExportLib() {
 
 bool WsjcppJsonRpc20ExportCliPython::exportPrepareDirs() {
     std::vector<std::string> vCreateDirs;
-    std::vector<std::string> vSplited = WsjcppCore::split(m_sExportDir, "/");
+    std::vector<std::string> vSplited = WsjcppCore::split(this->getExportDir(), "/");
     std::string sExportDir = "";
     for (int i = 0; i < vSplited.size(); i++) {
         if (i > 0) {
@@ -245,7 +205,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportPrepareDirs() {
         sExportDir = WsjcppCore::doNormalizePath(sExportDir);
         vCreateDirs.push_back(sExportDir);
     }
-    sExportDir = WsjcppCore::doNormalizePath(sExportDir + "/" + m_sPackageName);
+    sExportDir = WsjcppCore::doNormalizePath(sExportDir + "/" + this->getPackageName());
     vCreateDirs.push_back(sExportDir);
 
     for (int i = 0; i < vCreateDirs.size(); i++) {
@@ -267,21 +227,21 @@ bool WsjcppJsonRpc20ExportCliPython::exportPrepareDirs() {
 // ---------------------------------------------------------------------
 
 bool WsjcppJsonRpc20ExportCliPython::prepareReadmeMdIfNeed() {
-    std::string sReadmeMd = m_sExportDir + "/README.md";
+    std::string sReadmeMd = this->getExportDir() + "/README.md";
     if (!WsjcppCore::fileExists(sReadmeMd)) {
         std::string sContentReadme = 
-            "#" + m_sPackageName + "\n\n"
-            + m_sClassName + " Python Library for " + m_sAppName + "\n\n"
+            "#" + this->getPackageName() + "\n\n"
+            + this->getClassName() + " Python Library for " + this->getAppName() + "\n\n"
             + "## Install \n\n"
             + "```\n"
-            + "$ pip3 install " + m_sPackageName + " --upgrade\n"
+            + "$ pip3 install " + this->getPackageName() + " --upgrade\n"
             + "```\n\n"
             + "## Example code\n\n"
             + "```\n"
             + "#!/usr/bin/env python3\n"
             + "# -*- coding: utf-8 -*-\n"
-            + "from " + m_sPackageName + " import " + m_sClassName + "\n\n"
-            + "client = " + m_sClassName + "(\"ws://host/ws-api/\")\n\n"
+            + "from " + this->getPackageName() + " import " + this->getClassName() + "\n\n"
+            + "client = " + this->getClassName() + "(\"ws://host/ws-api/\")\n\n"
             + "resp = client.server_api({})\n\n"
             + "print(resp)\n"
             + "```\n\n"
@@ -296,7 +256,7 @@ bool WsjcppJsonRpc20ExportCliPython::prepareReadmeMdIfNeed() {
 
 bool WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
     std::ofstream setupPy;
-    std::string sFilename = m_sExportDir + "/setup.py";
+    std::string sFilename = this->getExportDir() + "/setup.py";
     WsjcppLog::info(TAG, "Prepare setup.py " + sFilename);
     
     // https://packaging.python.org/tutorials/packaging-projects/
@@ -307,14 +267,14 @@ bool WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
         "    long_description = fh.read()\n"
         "\n"
         "setuptools.setup(\n"
-        "    name='" + m_sPackageName + "',\n"
-        "    version='" + m_sAppVersion + "',\n"
-        "    packages=['" + m_sPackageName + "'],\n"
+        "    name='" + this->getPackageName() + "',\n"
+        "    version='" + this->getAppVersion() + "',\n"
+        "    packages=['" + this->getPackageName() + "'],\n"
         "    install_requires=['websocket-client>=0.56.0', 'requests>=2.21.0'],\n"
         "    keywords=['" + WsjcppCore::join(m_vKeywords, "', '") + "'],\n"
-        "    author='" + m_sAuthorName + "',\n"
-        "    author_email='" + m_sAuthorEmail + "',\n"
-        "    description='" + m_sClassName + " Python Library for " + m_sAppName + "',\n"
+        "    author='" + this->getAuthorName() + "',\n"
+        "    author_email='" + this->getAuthorEmail() + "',\n"
+        "    description='" + this->getClassName() + " Python Library for " + this->getAppName() + "',\n"
         "    long_description=long_description,\n"
         "    long_description_content_type='text/markdown',\n"
         "    url='" + m_sUrl + "',\n"
@@ -345,21 +305,21 @@ bool WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
 bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
     
     std::ofstream apimd;
-    std::string sFilename = m_sExportDir + "/API.md";
+    std::string sFilename = this->getExportDir() + "/API.md";
     WsjcppLog::info(TAG, "Prepare API.md " + sFilename);
 
     apimd.open(sFilename);
 
     long nSec = WsjcppCore::getCurrentTimeInSeconds();
 
-    apimd << "# " + m_sClassName + " Python Library \n\n";
-    apimd << "Automatically generated by " << m_sAppName << ". \n";
-    apimd << "* Version: " << m_sAppVersion << "\n";
+    apimd << "# " + this->getClassName() + " Python Library \n\n";
+    apimd << "Automatically generated by " << this->getAppName() << ". \n";
+    apimd << "* Version: " << this->getAppVersion() << "\n";
     apimd << "* Date: " << WsjcppCore::formatTimeForWeb(nSec) << "\n\n";
     apimd << "Example connect/disconnect:\n"
         << "```\n"
-        << "from " + m_sPackageName + " import " + m_sClassName + " \n\n"
-        << "client = " + m_sClassName + "('ws://host:1234')\n"
+        << "from " + getPackageName() + " import " + this->getClassName() + " \n\n"
+        << "client = " + this->getClassName() + "('ws://host:1234')\n"
         << " ... \n"
         << "client.close()\n"
         << "```\n";
@@ -426,11 +386,11 @@ bool WsjcppJsonRpc20ExportCliPython::exportAPImd() {
 // ---------------------------------------------------------------------
 
 bool WsjcppJsonRpc20ExportCliPython::exportInitPy() {
-    std::string sFilename = m_sExportDir + "/" + m_sPackageName + "/__init__.py";
+    std::string sFilename = this->getExportDir() + "/" + this->getPackageName() + "/__init__.py";
     WsjcppLog::info(TAG, "Prepare __init__.py " + sFilename);
     std::ofstream __init__;
     __init__.open (sFilename);
-    __init__ << "from ." << m_sClassName << " import " << m_sClassName << "\n";
+    __init__ << "from ." << this->getClassName() << " import " << this->getClassName() << "\n";
     WsjcppLog::ok(TAG, "Done: " + sFilename);
     return true;
 }
@@ -470,9 +430,11 @@ void exportCliPythonAddCheckDataTypeOfParam(
     }
 };
 
+// ---------------------------------------------------------------------
+
 bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
-    std::string sFilename = m_sExportDir + "/" + m_sPackageName + "/" + m_sClassName + ".py";
-    WsjcppLog::info(TAG, "Prepare " + m_sClassName + ".py: " + sFilename);
+    std::string sFilename = this->getExportDir() + "/" + this->getPackageName() + "/" + this->getClassName() + ".py";
+    WsjcppLog::info(TAG, "Prepare " + this->getClassName() + ".py: " + sFilename);
 
     std::ofstream clientpy;
     clientpy.open (sFilename);
@@ -483,8 +445,8 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
     builder
     .add("#!/usr/bin/env python3")
     .add("# -*- coding: utf-8 -*-")
-    .add("### This file was automatically generated by " + m_sAppName)
-    .add("### Version: " + m_sAppVersion)
+    .add("### This file was automatically generated by " + this->getAppName())
+    .add("### Version: " + this->getAppVersion())
     .add("### Date: " + WsjcppCore::formatTimeForWeb(nSec))
     .add("")
     .add("import asyncio")
@@ -493,10 +455,10 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
     .add("import select")
     .add("import time")
     .add("")
-    .sub("class " + m_sClassName + ":")
+    .sub("class " + this->getClassName() + ":")
         .add("__ws = None")
         .add("__url = None")
-        .add("__cli_version = '" + m_sAppVersion + "'")
+        .add("__cli_version = '" + this->getAppVersion() + "'")
         .add("__loop = None")
         .add("__token = None")
         .add("__connecting = False")
@@ -534,6 +496,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
         .sub("def getToken(self):")
             .add("return self.__token")
             .end()
+        .add("")
         .sub("def setToken(self, token):")
             .sub("if self.__token is None:")
                 .add("self.__token = token")
@@ -748,14 +711,14 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
             if (paramDef.isRequired()) {
                 builder
                 .sub("if " + sParamName + " is None: ")
-                    .add("raise Exception('Parameter \"" + sParamName + "\" expected (lib: " + m_sClassName + "." + sMethod + ")')")
+                    .add("raise Exception('Parameter \"" + sParamName + "\" expected (lib: " + this->getClassName() + "." + sMethod + ")')")
                     .end();
-                exportCliPythonAddCheckDataTypeOfParam(builder, paramDef, m_sClassName, sMethod);
+                exportCliPythonAddCheckDataTypeOfParam(builder, paramDef, this->getClassName(), sMethod);
                 builder.add("reqJson['params']['" + sParamName + "'] = " + sParamName);
             } else if (paramDef.isOptional()) {
                 builder
                     .sub("if " + sParamName + " != None: ");
-                exportCliPythonAddCheckDataTypeOfParam(builder, paramDef, m_sClassName, sMethod);
+                exportCliPythonAddCheckDataTypeOfParam(builder, paramDef, this->getClassName(), sMethod);
                     builder
                         .add("reqJson['params']['" + sParamName + "'] = " + sParamName)
                         .end();

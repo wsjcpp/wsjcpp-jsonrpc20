@@ -1,10 +1,18 @@
-#include "unit_test_request_server_api.h"
+#include <wsjcpp_unit_tests.h>
 #include <vector>
 #include <wsjcpp_core.h>
 #include <wsjcpp_jsonrpc20.h>
 
 // ---------------------------------------------------------------------
 // UnitTestRequestServerApi
+
+class UnitTestRequestServerApi : public WsjcppUnitTestBase {
+    public:
+        UnitTestRequestServerApi();
+        virtual bool doBeforeTest() override;
+        virtual void executeTest() override;
+        virtual bool doAfterTest() override;
+};
 
 REGISTRY_WSJCPP_UNIT_TEST(UnitTestRequestServerApi)
 
@@ -36,7 +44,7 @@ void UnitTestRequestServerApi::executeTest() {
     requestJson["id"] = "id1";
     
     std::string sRequest = requestJson.dump();
-    compareB("Response: check method", pRequest->parseIncomeData(sRequest), true);
+    compare("Response: check method", pRequest->parseIncomeData(sRequest), true);
 
     pHandlerServerApi->handle(pRequest);
 
@@ -47,17 +55,17 @@ void UnitTestRequestServerApi::executeTest() {
     std::string sMethod = respJson["method"];
     std::string sId = respJson["id"];
     std::string sJsonRpc = respJson["jsonrpc"];
-    compareS("Response: check method", sMethod, "server_api");
-    compareS("Response: check id", sId, "id1");
-    compareS("Response: check jsonrpc", sJsonRpc, "2.0");
+    compare("Response: check method", sMethod, "server_api");
+    compare("Response: check id", sId, "id1");
+    compare("Response: check jsonrpc", sJsonRpc, "2.0");
 
     
     std::string sVersion = respJson["result"]["version"];
-    compareS("Response: check result.version", sVersion, std::string(WSJCPP_APP_VERSION));
+    compare("Response: check result.version", sVersion, std::string(WSJCPP_APP_VERSION));
     
     int nDataLength = respJson["result"]["data_length"];
     int nExpectedDataLength = respJson["result"]["data"].size();
-    compareN("Response: check result.data_length", nDataLength, nExpectedDataLength);
+    compare("Response: check result.data_length", nDataLength, nExpectedDataLength);
 
     int nId = 1;
     for (int i = 0; i < nExpectedDataLength; i++) {
@@ -73,16 +81,16 @@ void UnitTestRequestServerApi::executeTest() {
     bool bAccessTester = data0Json["access"]["tester"];
     bool bAccessAdmin = data0Json["access"]["admin"];
 
-    compareB("Response: check result.data[0].access.unauthorized", bAccessUnauthorized, true);
-    compareB("Response: check result.data[0].access.user", bAccessUser, true);
-    compareB("Response: check result.data[0].access.tester", bAccessTester, true);
-    compareB("Response: check result.data[0].access.admin", bAccessAdmin, true);
+    compare("Response: check result.data[0].access.unauthorized", bAccessUnauthorized, true);
+    compare("Response: check result.data[0].access.user", bAccessUser, true);
+    compare("Response: check result.data[0].access.tester", bAccessTester, true);
+    compare("Response: check result.data[0].access.admin", bAccessAdmin, true);
     
     sMethod = data0Json["method"];
-    compareS("Response: check result.data[0].method", sMethod, "server_api");
+    compare("Response: check result.data[0].method", sMethod, "server_api");
     std::string sDescription = data0Json["description"];
 
-    compareS("Response: check result.data[0].method", sDescription, pHandlerServerApi->getDescription());
+    compare("Response: check result.data[0].method", sDescription, pHandlerServerApi->getDescription());
 }
 
 // ---------------------------------------------------------------------

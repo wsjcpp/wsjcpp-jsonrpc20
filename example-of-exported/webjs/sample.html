@@ -1,0 +1,69 @@
+<html>
+<head>
+    <script src='dist/libwsjcppjson20client.js'></script>
+    <script>
+        function log(n) {
+            console.log(n);
+            var log = document.getElementById('log');
+            log.innerHTML += '[' + new Date() + '] ' + n + '\r\n';
+        };
+        var client = new SomeClient();
+        document.addEventListener('DOMContentLoaded', function() {
+            client.bind('notify', function(data) {
+                log('notify: ' + JSON.stringify(data))
+            });
+            client.bind('connected', function(data) {
+                log('connected: ' + JSON.stringify(data))
+                connecting_form.style.display = 'none';
+                login_form.style.display = '';
+                logout_form.style.display = 'none';
+            });
+            client.bind('disconnected', function(data) {
+                log('disconnected: ' + JSON.stringify(data))
+                connecting_form.style.display = '';
+                login_form.style.display = 'none';
+                logout_form.style.display = 'none';
+            });
+            client.bind('userdata', function(data) {
+                log('userdata: ' + JSON.stringify(data))
+                login_form.style.display = 'none';
+                logout_form.style.display = '';
+            });
+        });
+    </script>
+</head>
+<body>
+<div id='connecting_form'>
+    <h1>Connect to Server</h1>
+    <input type='text' id='server_url'><br>
+    <button id='btn_connect'>Connect</button>
+</div>
+<div id='login_form' style='display: none'>
+    <h1>Login</h1>
+    <input type='text' id='login'><br>
+    <input type='password' id='password'><br>
+    <button id='btn_login'>Login</button>
+</div>
+<div id='logout_form' style='display: none'>
+    <h1>Connected</h1>
+    <button id='btn_logout'>Logout</button>
+</div>
+<script>
+    server_url.value = 'ws://' + window.location.hostname + ':1234/api-ws/'
+    btn_login.onclick = function() {
+        client.login({email: login.value, password: password.value}).done(function(r) { 
+            log('Login success, token = ' + r.token);
+        }).fail(function(e) {
+            log('Login failed, error = ' + e.error);
+        })
+    }
+    btn_logout.onclick = function() {
+        client.deinit();
+    }
+    btn_connect.onclick = function() {
+        client.init({'baseUrl': server_url.value});
+    }
+</script>
+<pre id='log'></pre>
+</body>
+</html>

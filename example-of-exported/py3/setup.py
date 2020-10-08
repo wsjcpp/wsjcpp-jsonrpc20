@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='libwsjcppjson20client',
-    version='v0.0.3',
+    version='v0.0.4',
     packages=['libwsjcppjson20client'],
     install_requires=['websocket-client>=0.56.0', 'requests>=2.21.0'],
     keywords=['wsjcpp-jsonrpc20', 'wsjcpp', 'wsjcpp-jsonrpc20', 'example-python-client'],

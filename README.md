@@ -1,13 +1,17 @@
 # wsjcpp-jsonrpc20
 
-[![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-jsonrpc20.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-jsonrpc20) [![Total alerts](https://img.shields.io/lgtm/alerts/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/alerts/) [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/context:cpp) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/context:python)
+[![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-jsonrpc20.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-jsonrpc20) [![Total alerts](https://img.shields.io/lgtm/alerts/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/alerts/) [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/context:cpp) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/wsjcpp/wsjcpp-jsonrpc20.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/wsjcpp/wsjcpp-jsonrpc20/context:python) [![deepcode](https://www.deepcode.ai/api/gh/badge?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwbGF0Zm9ybTEiOiJnaCIsIm93bmVyMSI6IndzamNwcCIsInJlcG8xIjoid3NqY3BwLWpzb25ycGMyMCIsImluY2x1ZGVMaW50IjpmYWxzZSwiYXV0aG9ySWQiOjE1NjQxLCJpYXQiOjE2MDE2MTM0MTh9.gErsnFaMiBhySNjNeNqAjFgxFP41QJZVYeJJffWmaDw)](https://www.deepcode.ai/app/gh/wsjcpp/wsjcpp-jsonrpc20/_/dashboard?utm_content=gh%2Fwsjcpp%2Fwsjcpp-jsonrpc20)
 
 C++ Implementation for JsonRPC 2.0 (oriented on websockets)
+
+Got information about this protocol here [https://www.simple-is-better.org/json-rpc/jsonrpc20.html](https://www.simple-is-better.org/json-rpc/jsonrpc20.html)
+But used not all standart
 
 ## Features
 
 * Collect all handlers for jsonrpc20
 * Including system of define validators
+* Can generate client library on python (Include control pypi files)
 
 ## Integration
 
@@ -20,7 +24,8 @@ $ wsjcpp install https://github.com/wsjcpp/wsjcpp-jsonrpc20:master
 ### Include files
 
 * src.wsjcpp/nlohmann_json/json.hpp
-* src.wsjcpp/wsjcpp_core.h
+* src.wsjcpp/wsjcpp_core/wsjcpp_core.h
+* src.wsjcpp/wsjcpp_core/wsjcpp_core.cpp
 * src.wsjcpp/wsjcpp_validators/wsjcpp_validators.h
 * src.wsjcpp/wsjcpp_validators/wsjcpp_validators.cpp
 * src/wsjcpp_jsonrpc20.h
