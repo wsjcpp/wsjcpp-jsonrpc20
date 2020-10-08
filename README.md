@@ -30,8 +30,12 @@ $ wsjcpp install https://github.com/wsjcpp/wsjcpp-jsonrpc20:master
 * src.wsjcpp/wsjcpp_validators/wsjcpp_validators.cpp
 * src/wsjcpp_jsonrpc20.h
 * src/wsjcpp_jsonrpc20.cpp
+* src/wsjcpp_jsonrpc20_export_cli_base.h
+* src/wsjcpp_jsonrpc20_export_cli_base.cpp
 * src/wsjcpp_jsonrpc20_export_cli_python.h
 * src/wsjcpp_jsonrpc20_export_cli_python.cpp
+* src/wsjcpp_jsonrpc20_export_cli_webjs.h
+* src/wsjcpp_jsonrpc20_export_cli_webjs.cpp
 
 ## Prepare handler
 
@@ -144,9 +148,13 @@ void main() {
     exportCliPython.setAuthorEmail("mrseakg@gmail.com");
     exportCliPython.setAppName(std::string(WSJCPP_APP_NAME));
     exportCliPython.setAppVersion(std::string(WSJCPP_APP_VERSION));
+    exportCliPython.setClassName("SomeClient");
     exportCliPython.setUrl("https://github.com/user/repo");
-    exportCliPython.setDownloadUrl("https://github.com/user/repo/archive/" + std::string(WSJCPP_APP_NAME) + ".tar.gz");
+    exportCliPython.setDownloadUrl("https://github.com/user/repo/archive/" + std::string(WSJCPP_APP_NAME) + ".tar.gz");;
     exportCliPython.setKeywords({std::string(WSJCPP_APP_NAME), "wsjcpp", "wsjcpp-jsonrpc20", "example-python-client"});
+    exportCliPython.addLoginMethod("auth_login", "token");
+    exportCliPython.addLoginMethod("auth_token", "token");
+    exportCliPython.addLogoffMethod("auth_logoff");
 
     if (!exportCliPython.doExportLib()) {
         std::cout << "Failed!" << std::endl;
