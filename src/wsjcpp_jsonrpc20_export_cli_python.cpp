@@ -2,17 +2,7 @@
 
 #include <wsjcpp_core.h>
 #include <wsjcpp_jsonrpc20.h>
-#include <iostream>
-// #include <iomanip>
-#include <algorithm>
-// #include <sys/types.h>
-// #include <sys/stat.h>
-#include <memory>
-#include <iostream>
 #include <fstream>
-#include <iomanip> // put_time
-#include <ctime>
-#include <sstream>
 
 // ---------------------------------------------------------------------
 
@@ -126,7 +116,7 @@ public:
 WsjcppJsonRpc20ExportCliPython::WsjcppJsonRpc20ExportCliPython(
     const std::string &sExportDir,
     const std::string &sPackageName
-) : WsjcppJsonRpc20ExportCliBase(sExportDir, sPackageName) {
+) : WsjcppJsonRpc20ExportCliBase("cli-py3", sExportDir, sPackageName) {
     TAG = "WsjcppJsonRpc20ExportCliPython";
     m_sUrl = "none";
 }
@@ -141,24 +131,6 @@ void WsjcppJsonRpc20ExportCliPython::setUrl(const std::string &sUrl) {
 
 void WsjcppJsonRpc20ExportCliPython::setDownloadUrl(const std::string &sDownloadUrl) {
     m_sDownloadUrl = sDownloadUrl;
-}
-
-// ---------------------------------------------------------------------
-
-void WsjcppJsonRpc20ExportCliPython::setKeywords(const std::vector<std::string> &vKeywords) {
-    m_vKeywords = vKeywords;
-}
-
-// ---------------------------------------------------------------------
-
-void WsjcppJsonRpc20ExportCliPython::addLoginMethod(const std::string &sMethod, const std::string &sResultVarName) {
-    m_vMethodsForKeepAuthToken.push_back(std::pair<std::string,std::string>(sMethod, sResultVarName));
-}
-
-// ---------------------------------------------------------------------
-
-void WsjcppJsonRpc20ExportCliPython::addLogoffMethod(const std::string &sMethod) {
-    m_vMethodsForClearAuthToken.push_back(sMethod);
 }
 
 // ---------------------------------------------------------------------
@@ -271,7 +243,7 @@ bool WsjcppJsonRpc20ExportCliPython::exportSetupPy() {
         "    version='" + this->getAppVersion() + "',\n"
         "    packages=['" + this->getPackageName() + "'],\n"
         "    install_requires=['websocket-client>=0.56.0', 'requests>=2.21.0'],\n"
-        "    keywords=['" + WsjcppCore::join(m_vKeywords, "', '") + "'],\n"
+        "    keywords=['" + WsjcppCore::join(this->getKeywords(), "', '") + "'],\n"
         "    author='" + this->getAuthorName() + "',\n"
         "    author_email='" + this->getAuthorEmail() + "',\n"
         "    description='" + this->getClassName() + " Python Library for " + this->getAppName() + "',\n"
@@ -619,14 +591,14 @@ bool WsjcppJsonRpc20ExportCliPython::exportClientPy() {
                 .add("return jsonIn")
                 .end()
     ;
-    for (int i = 0; i < m_vMethodsForClearAuthToken.size(); i++) {
+    for (int i = 0; i < this->getLogoffMethods().size(); i++) {
         builder
-            .sub("if jsonIn['method'] == '" + m_vMethodsForClearAuthToken[i] + "' and 'result' in jsonIn:")
+            .sub("if jsonIn['method'] == '" + this->getLogoffMethods()[i] + "' and 'result' in jsonIn:")
                 .add("self.__token = None")
                 .end();
     }
-    for (int i = 0; i < m_vMethodsForKeepAuthToken.size(); i++) {
-        std::pair<std::string,std::string> p = m_vMethodsForKeepAuthToken[i];
+    for (int i = 0; i < this->getLoginMethods().size(); i++) {
+        std::pair<std::string,std::string> p = this->getLoginMethods()[i];
         builder
             .sub("if jsonIn['method'] == '" + p.first + "' and 'result' in jsonIn:")
                 .add("self.__token = jsonIn['result']['" + p.second + "']")

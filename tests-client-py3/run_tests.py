@@ -74,15 +74,15 @@ def message_received(client, server, message):
     print("%d <<< %s" % (client['id'], resp))
     server.send_message(client, resp)
 
-PORT=9001
-print("Start server on 9001")
+PORT=1234
+print("Start server on 1234")
 server = SomeWebsocketServer(PORT, host='0.0.0.0', loglevel=logging.INFO)
 server.set_fn_new_client(new_client)
 server.set_fn_client_left(client_left)
 server.set_fn_message_received(message_received)
 # server.run_server_without_waiting()
 server.run_forever2()
-print("Server runned on port 9001")
+print("Server runned on port 1234")
 
 # client connect
 print("Connecting by client... ")
