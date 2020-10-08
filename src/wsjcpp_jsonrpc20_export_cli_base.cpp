@@ -1,25 +1,16 @@
 #include "wsjcpp_jsonrpc20_export_cli_base.h"
-
-#include <iostream>
-#include <iomanip>
-#include <algorithm>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <memory>
-#include <iostream>
-#include <fstream>
-#include <iomanip> // put_time
-#include <ctime>
-#include <sstream>
+#include <iomanip> // for put_time
 
 // ---------------------------------------------------------------------
 // WsjcppJsonRpc20ExportCliBase
 
 WsjcppJsonRpc20ExportCliBase::WsjcppJsonRpc20ExportCliBase(
+    const std::string &sExporterName,
     const std::string &sExportDir,
     const std::string &sPackageName
 ) {
     TAG = "WsjcppJsonRpc20ExportCliBase";
+    m_sExporterName = sExporterName;
     m_sExportDir = WsjcppCore::doNormalizePath(sExportDir);
     m_sPackageName = sPackageName;
     m_sAppName = "unknown";
@@ -27,6 +18,19 @@ WsjcppJsonRpc20ExportCliBase::WsjcppJsonRpc20ExportCliBase(
     m_sAuthorName = "Unknown";
     m_sAuthorEmail = "unknown";
     m_sClassName = "Unknown";
+    m_sDefaultConnectionString = "ws://localhost:1234/";
+
+    // generate DateNow in one time on start
+    std::time_t t = std::time(nullptr);
+    std::stringstream buffer;
+    buffer << std::put_time(std::gmtime(&t), "%d %b %Y");
+    m_sDateNow = buffer.str();
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20ExportCliBase::getExporterName() const {
+    return m_sExporterName;
 }
 
 // ---------------------------------------------------------------------
@@ -105,3 +109,55 @@ std::string WsjcppJsonRpc20ExportCliBase::getClassName() const {
 }
 
 // ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::setKeywords(const std::vector<std::string> &vKeywords) {
+    m_vKeywords = vKeywords;
+}
+
+// ---------------------------------------------------------------------
+
+std::vector<std::string> WsjcppJsonRpc20ExportCliBase::getKeywords() const {
+    return m_vKeywords;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::setDefaultConnectionString(const std::string &sDefaultConnectionString) {
+    m_sDefaultConnectionString = sDefaultConnectionString;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20ExportCliBase::getDefaultConnectionString() const {
+    return m_sDefaultConnectionString;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20ExportCliBase::getDateNow() const {
+    return m_sDateNow;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::addLoginMethod(const std::string &sMethod, const std::string &sResultVarName) {
+    m_vMethodsForKeepAuthToken.push_back(std::pair<std::string,std::string>(sMethod, sResultVarName));
+}
+
+// ---------------------------------------------------------------------
+
+std::vector<std::pair<std::string, std::string>> WsjcppJsonRpc20ExportCliBase::getLoginMethods() const {
+    return m_vMethodsForKeepAuthToken;
+}
+
+// ---------------------------------------------------------------------
+
+void WsjcppJsonRpc20ExportCliBase::addLogoffMethod(const std::string &sMethod) {
+    m_vMethodsForClearAuthToken.push_back(sMethod);
+}
+
+// ---------------------------------------------------------------------
+
+std::vector<std::string> WsjcppJsonRpc20ExportCliBase::getLogoffMethods() const {
+    return m_vMethodsForClearAuthToken;
+}
