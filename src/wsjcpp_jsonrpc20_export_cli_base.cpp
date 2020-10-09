@@ -21,10 +21,13 @@ WsjcppJsonRpc20ExportCliBase::WsjcppJsonRpc20ExportCliBase(
     m_sDefaultConnectionString = "ws://localhost:1234/";
 
     // generate DateNow in one time on start
-    std::time_t t = std::time(nullptr);
-    std::stringstream buffer;
-    buffer << std::put_time(std::gmtime(&t), "%d %b %Y");
-    m_sDateNow = buffer.str();
+    std::time_t tm_ = std::time(nullptr);
+    struct tm tstruct;
+    gmtime_r(&tm_, &tstruct);
+    char buf[80];
+    memset(buf, 0, 80);
+    strftime(buf, sizeof(buf), "%d %b %Y", &tstruct);
+    m_sDateNow = std::string(buf);
 }
 
 // ---------------------------------------------------------------------
