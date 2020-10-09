@@ -32,11 +32,10 @@ class WsjcppJsonRpc20ExportCliWebJs : public WsjcppJsonRpc20ExportCliBase {
         bool prepareDirs();
         bool exportLibCliWebJSFile();
 
-        void exportPackageJson();
-        void exportAPImd();
-        
-        void exportLibCliWebServiceTSFile();
-        void exportSampleHtmlFile();
+        bool exportPackageJson();
+        bool exportAPImd();
+        bool exportLibCliWebServiceTSFile();
+        bool exportSampleHtmlFile();
 };
 
 #endif //  WSJCPP_JSONRPC20_EXPORT_CLI_WEBJS_H
