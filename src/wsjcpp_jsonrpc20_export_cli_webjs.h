@@ -27,14 +27,12 @@ class WsjcppJsonRpc20ExportCliWebJs : public WsjcppJsonRpc20ExportCliBase {
 
         std::string m_sSampleUrlConnection;
 
-        std::vector<std::string> m_vEvents;
-
         bool prepareDirs();
         bool exportLibCliWebJSFile();
 
         bool exportPackageJson();
         bool exportAPImd();
-        bool exportLibCliWebServiceTSFile();
+        // bool exportLibCliWebServiceTSFile();
         bool exportSampleHtmlFile();
 };
 

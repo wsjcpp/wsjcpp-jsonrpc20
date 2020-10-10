@@ -35,10 +35,11 @@ int main(int argc, const char* argv[]) {
     exportCliPython.addLoginMethod("auth_token", "token");
     exportCliPython.addLogoffMethod("auth_logoff");
 
-    if (!exportCliPython.doExportLib()) {
-        std::cout << "Python Client Library export failed!" << std::endl;
-    } else {
+    if (exportCliPython.doExportLib()) {
         std::cout << "Python Client Library export success!" << std::endl;
+    } else {
+        std::cout << "Python Client Library export failed!" << std::endl;
+        return -1;
     }
 
     // export WebJS
@@ -63,10 +64,11 @@ int main(int argc, const char* argv[]) {
     // exportCliWebJs.addLoginMethod("auth_token", "token");
     // exportCliWebJs.addLogoffMethod("auth_logoff");
 
-    if (!exportCliWebJs.doExportLib()) {
-        std::cout << "WebJS Client Library export failed!" << std::endl;
-    } else {
+    if (exportCliWebJs.doExportLib()) {
         std::cout << "WebJS Client Library export success!" << std::endl;
+    } else {
+        std::cout << "WebJS Client Library export failed!" << std::endl;
+        return -1;
     }
 
     return 0;

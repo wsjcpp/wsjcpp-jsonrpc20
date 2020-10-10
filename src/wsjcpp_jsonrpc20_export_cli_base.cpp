@@ -28,6 +28,14 @@ WsjcppJsonRpc20ExportCliBase::WsjcppJsonRpc20ExportCliBase(
     memset(buf, 0, 80);
     strftime(buf, sizeof(buf), "%d %b %Y", &tstruct);
     m_sDateNow = std::string(buf);
+
+    // client events
+    m_vClientEvents.push_back("connected");
+    m_vClientEvents.push_back("reconnecting");
+    m_vClientEvents.push_back("disconnected");
+    m_vClientEvents.push_back("broken");
+
+    m_vServerNotifications = WsjcppJsonRpc20::getNotificationList();
 }
 
 // ---------------------------------------------------------------------
@@ -164,3 +172,17 @@ void WsjcppJsonRpc20ExportCliBase::addLogoffMethod(const std::string &sMethod) {
 std::vector<std::string> WsjcppJsonRpc20ExportCliBase::getLogoffMethods() const {
     return m_vMethodsForClearAuthToken;
 }
+
+// ---------------------------------------------------------------------
+
+std::vector<std::string> WsjcppJsonRpc20ExportCliBase::getClientEvents() const {
+    return m_vClientEvents;
+}
+
+// ---------------------------------------------------------------------
+
+std::vector<std::string> WsjcppJsonRpc20ExportCliBase::getServerNotifications() const {
+    return m_vServerNotifications;
+}
+
+// ---------------------------------------------------------------------

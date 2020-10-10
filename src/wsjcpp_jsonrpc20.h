@@ -273,21 +273,24 @@ class WsjcppJsonRpc20Request {
 };
 
 // ---------------------------------------------------------------------
-// WsjcppJsonRpc20EventBase - api handler basic class
+// WsjcppJsonRpc20NotificationBase
 
-class WsjcppJsonRpc20EventBase {
+class WsjcppJsonRpc20NotificationBase {
     public:
-        WsjcppJsonRpc20EventBase(const std::string &sEventName, const std::string &sDescription);
+        WsjcppJsonRpc20NotificationBase(const std::string &sNotificationName, const std::string &sDescription);
+        std::string getNotificationName();
 
     protected:
         std::string TAG;
-        std::string m_sEventName;
+
+    private:
+        std::string m_sNotificationName;
         std::string m_sDescription;
 };
 
-// Registry Wsjcpp JsonRpc20 Event Fabric
-#define REGISTRY_WSJCPP_JSONRPC20_EVENT_FABRIC( classname ) \
-    static classname * pRegistryWsjcppJsonRpc20 ## classname = new classname(); \
+// Registry Wsjcpp JsonRpc20 Notify Type
+#define REGISTRY_WSJCPP_JSONRPC20_NOTIFICATION( classname ) \
+    static classname * pRegistryWsjcppJsonRpc20Notification ## classname = new classname(); \
 
 // ---------------------------------------------------------------------
 // WsjcppJsonRpc20HandlerBase - api handler basic class
@@ -344,6 +347,7 @@ class WsjcppJsonRpc20HandlerBase {
 
 
 extern std::map<std::string, WsjcppJsonRpc20HandlerBase*> *g_pWsjcppJsonRpc20HandlerList;
+extern std::map<std::string, WsjcppJsonRpc20NotificationBase*> *g_pWsjcppJsonRpc20NotificationList;
 
 // ---------------------------------------------------------------------
 // Global collection with handlers
@@ -351,10 +355,10 @@ extern std::map<std::string, WsjcppJsonRpc20HandlerBase*> *g_pWsjcppJsonRpc20Han
 class WsjcppJsonRpc20 {
     public:
         static void initGlobalVariables();
-        static void addHandler(const std::string &sName, WsjcppJsonRpc20HandlerBase* pCmdHandler);
-        static WsjcppJsonRpc20HandlerBase *findJsonRpc20Handler(const std::string &sCmd);
-        static std::vector<std::string> getEventList();
-        static void registryEventFabric(const std::string &sEventName, WsjcppJsonRpc20EventBase* pEventFabric);
+        static void addHandler(const std::string &sMethodName, WsjcppJsonRpc20HandlerBase* pHandler);
+        static WsjcppJsonRpc20HandlerBase *findJsonRpc20Handler(const std::string &sMethodName);
+        static std::vector<std::string> getNotificationList();
+        static void registryNotification(const std::string &sNotifyName, WsjcppJsonRpc20NotificationBase* pEventFabric);
 };
 
 // Registry Wsjcpp JsonRpc20 Handler
@@ -369,6 +373,14 @@ class WsjcppJsonRpc20HandlerServerApi : public WsjcppJsonRpc20HandlerBase {
     public:
         WsjcppJsonRpc20HandlerServerApi();
         virtual void handle(WsjcppJsonRpc20Request *pRequest);
+};
+
+// ---------------------------------------------------------------------
+// This notification will be return information about server
+
+class WsjcppJsonRpc20NotificationServer : public WsjcppJsonRpc20NotificationBase {
+    public:
+        WsjcppJsonRpc20NotificationServer();
 };
 
 #endif // WSJCPP_JSONRPC20

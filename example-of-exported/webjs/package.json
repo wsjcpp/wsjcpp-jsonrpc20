@@ -1,6 +1,6 @@
 {
   "name": "libwsjcppjson20client",
-  "version": "v0.0.4",
+  "version": "v0.0.5",
   "description": "SomeClient JavaScript Web Client Library for wsjcpp-jsonrpc20",
   "main": "dist/libwsjcppjson20client.js",
   "repository": {

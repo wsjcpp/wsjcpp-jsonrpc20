@@ -34,6 +34,8 @@ class WsjcppJsonRpc20ExportCliBase {
         std::vector<std::pair<std::string, std::string>> getLoginMethods() const;
         void addLogoffMethod(const std::string &sMethod);
         std::vector<std::string> getLogoffMethods() const;
+        std::vector<std::string> getClientEvents() const;
+        std::vector<std::string> getServerNotifications() const;
 
         virtual bool doExportLib() = 0;
 
@@ -54,6 +56,9 @@ class WsjcppJsonRpc20ExportCliBase {
         std::string m_sDateNow;
         std::vector<std::pair<std::string, std::string>> m_vMethodsForKeepAuthToken;
         std::vector<std::string> m_vMethodsForClearAuthToken;
+
+        std::vector<std::string> m_vClientEvents;
+        std::vector<std::string> m_vServerNotifications;
 };
 
 #endif //  WSJCPP_JSONRPC20_EXPORT_CLI_BASE_H
