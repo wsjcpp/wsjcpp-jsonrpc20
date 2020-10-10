@@ -12,15 +12,14 @@ WsjcppJsonRpc20ExportCliWebJs::WsjcppJsonRpc20ExportCliWebJs(
 ) : WsjcppJsonRpc20ExportCliBase("cli-webjs", sExportDir, sPackageName) {
     TAG = "WsjcppJsonRpc20ExportCliWebJs";
 
-    // TODO must be WsjcppJsonRpc20::eventsList() or something like
-    m_vEvents.push_back("server");
-    m_vEvents.push_back("notify");
-    m_vEvents.push_back("chat");
-    m_vEvents.push_back("connected");
-    m_vEvents.push_back("reconnecting");
-    m_vEvents.push_back("disconnected");
-    m_vEvents.push_back("broken");
-    m_vEvents.push_back("userdata");
+    // m_vEvents.push_back("server");
+    // m_vEvents.push_back("notify");
+    // m_vEvents.push_back("chat");
+    // m_vEvents.push_back("connected");
+    // m_vEvents.push_back("reconnecting");
+    // m_vEvents.push_back("disconnected");
+    // m_vEvents.push_back("broken");
+    // m_vEvents.push_back("userdata");
 }
 
 // ---------------------------------------------------------------------
@@ -133,7 +132,7 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportPackageJson() {
     packageJson.close();
     std::cout << "\t> OK" << std::endl;
 
-    return false;
+    return true;
 }
 
 // ---------------------------------------------------------------------
@@ -159,10 +158,10 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportAPImd() {
         "```\n"
         "var client = new " + this->getClassName() + "();\n"
     ;
-    for (int i = 0; i < m_vEvents.size(); i++) {
+    /*for (int i = 0; i < m_vEvents.size(); i++) {
         apimd <<
             "client.bind('" + m_vEvents[i] + "', function(data) { console.log('" + m_vEvents[i] + "', data)})\n";
-    }
+    }*/
     apimd <<
         "client.bind('connected', function(data) { console.log('connected', data)})\n"
         "// connect\n"
@@ -249,37 +248,63 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportSampleHtmlFile() {
     }
 
     sample_html <<
+        "<!DOCTYPE html>\r\n"
         "<html>\r\n"
         "<head>\r\n"
+        "    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>"
         "    <script src='dist/" + this->getPackageName() + ".js'></script>\r\n"
         "    <script>\r\n"
+        "        function formattedDate(d = new Date) {\r\n"
+        "            const year = String(d.getFullYear());\r\n"
+        "            let month = String(d.getMonth() + 1);\r\n"
+        "            if (month.length < 2) month = '0' + month;\r\n"
+        "            let day = String(d.getDate());\r\n"
+        "            if (day.length < 2) day = '0' + day;\r\n"
+        "            let hours = String(d.getHours());\r\n"
+        "            if (hours.length < 2) hours = '0' + hours;\r\n"
+        "            let mins = String(d.getMinutes());\r\n"
+        "            if (mins.length < 2) mins = '0' + mins;\r\n"
+        "            let secs = String(d.getSeconds());\r\n"
+        "            if (secs.length < 2) secs = '0' + secs;\r\n"
+        "            return `${year}-${month}-${day} ${hours}:${mins}:${secs}`;\r\n"
+        "        }\r\n"
         "        function log(n) {\r\n"
         "            console.log(n);\r\n"
         "            var log = document.getElementById('log');\r\n"
-        "            log.innerHTML += '[' + new Date() + '] ' + n + '\\r\\n';\r\n"
+        "            log.innerHTML += '[' + formattedDate() + '] ' + n + '\\r\\n';\r\n"
         "        };\r\n"
-        "        var client = new " + this->getClassName() + "();\r\n"
-        "        document.addEventListener('DOMContentLoaded', function() {\r\n"
-        "            client.bind('notify', function(data) {\r\n"
-        "                log('notify: ' + JSON.stringify(data))\r\n"
-        "            });\r\n"
-        "            client.bind('connected', function(data) {\r\n"
+        "        var client = " + this->getClassName() + "\r\n"
+        "        document.addEventListener('DOMContentLoaded', function() {\r\n";
+    for (int i = 0; i < this->getServerNotifications().size(); i++) {
+        sample_html <<
+            "            client.bindNotification('" + this->getServerNotifications()[i] + "', function(data) {\r\n"
+            "                log('notify: ' + JSON.stringify(data))\r\n"
+            "            });\r\n";
+    }
+    sample_html <<
+        "            client.bindEvent('connected', function(data) {\r\n"
         "                log('connected: ' + JSON.stringify(data))\r\n"
         "                connecting_form.style.display = 'none';\r\n"
         "                login_form.style.display = '';\r\n"
         "                logout_form.style.display = 'none';\r\n"
         "            });\r\n"
-        "            client.bind('disconnected', function(data) {\r\n"
+        "            client.bindEvent('disconnected', function(data) {\r\n"
         "                log('disconnected: ' + JSON.stringify(data))\r\n"
         "                connecting_form.style.display = '';\r\n"
         "                login_form.style.display = 'none';\r\n"
         "                logout_form.style.display = 'none';\r\n"
         "            });\r\n"
-        "            client.bind('userdata', function(data) {\r\n"
-        "                log('userdata: ' + JSON.stringify(data))\r\n"
-        "                login_form.style.display = 'none';\r\n"
-        "                logout_form.style.display = '';\r\n"
+        "            client.bindEvent('reconnecting', function(data) {\r\n"
+        "                log('reconnecting: ' + JSON.stringify(data))\r\n"
         "            });\r\n"
+        "            client.bindEvent('broken', function(data) {\r\n"
+        "                log('broken: ' + JSON.stringify(data))\r\n"
+        "            });\r\n"
+        //"            client.bindEvent('userdata', function(data) {\r\n"
+        //"                log('userdata: ' + JSON.stringify(data))\r\n"
+        //"                login_form.style.display = 'none';\r\n"
+        //"                logout_form.style.display = '';\r\n"
+        //"            });\r\n"
         "        });\r\n"
         "    </script>\r\n"
         "</head>\r\n"
@@ -300,9 +325,9 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportSampleHtmlFile() {
         "    <button id='btn_logout'>Logout</button>\r\n"
         "</div>\r\n"
         "<script>\r\n"
-        "    server_url.value = 'ws://' + window.location.hostname + ':1234/api-ws/'\r\n"
+        "    server_url.value = '" + this->getDefaultConnectionString() + "'\r\n"
         "    btn_login.onclick = function() {\r\n"
-        "        client.login({email: login.value, password: password.value}).done(function(r) { \r\n"
+        "        client.auth_login({login: login.value, password: password.value}).done(function(r) { \r\n"
         "            log('Login success, token = ' + r.token);\r\n"
         "        }).fail(function(e) {\r\n"
         "            log('Login failed, error = ' + e.error);\r\n"
@@ -347,11 +372,20 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebJSFile() {
         "    var _listeners = {};\r\n"
         "    var _connectionState = '?';\r\n"
         "    var _tokenValue = '';\r\n"
-        "    var _events = {\r\n";
-    
-    for (int i = 0; i < m_vEvents.size(); i++) {
+        "    var _clientEvents = { \r\n";
+   
+    for (int i = 0; i < this->getClientEvents().size(); i++) {
         libwjscppcli_web_js_file <<
-        "        '" << m_vEvents[i] << "': [],\r\n";
+        "        '" << this->getClientEvents()[i] << "': [],\r\n";
+    }
+
+    libwjscppcli_web_js_file <<
+        "    };\r\n"
+        "    var _serverNotifications = { \r\n";
+    
+    for (int i = 0; i < this->getServerNotifications().size(); i++) {
+        libwjscppcli_web_js_file <<
+        "        '" << this->getServerNotifications()[i] << "': [],\r\n";
     }
 
     libwjscppcli_web_js_file <<
@@ -427,15 +461,23 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebJSFile() {
         "        return matches ? decodeURIComponent(matches[1]) : '';\r\n"
         "    }\r\n"
         "    _tokenValue = self.getToken();\r\n"
-        "    self.bind = function(name, f) { _events[name].push(f); }\r\n"
-        "    self.unbind = function(name) { _events[name] = []; }\r\n"
-        "    function _call(name, data) {\r\n"
+        "    self.bindNotification = function(name, f) { _serverNotifications[name].push(f); }\r\n"
+        "    self.unbindNotification = function(name) { _serverNotifications[name] = []; }\r\n"
+        "    function _callNotification(name, data) {\r\n"
         "        function __call(f, data) { setTimeout(function() { f(data) },1)}"
-        "        for (var i = 0; i < _events[name].length; i++) {\r\n"
-        "            __call(_events[name][i], data);\r\n"
+        "        for (var i = 0; i < _serverNotifications[name].length; i++) {\r\n"
+        "            __call(_serverNotifications[name][i], data);\r\n"
         "        }\r\n"
         "    }\r\n"
-        "    self.bind('server', function(response) { \r\n"
+        "    self.bindEvent = function(name, f) { _clientEvents[name].push(f); }\r\n"
+        "    self.unbindEvent = function(name) { _clientEvents[name] = []; }\r\n"
+        "    function _callEvent(name, data) {\r\n"
+        "        function __call(f, data) { setTimeout(function() { f(data) },1)}"
+        "        for (var i = 0; i < _clientEvents[name].length; i++) {\r\n"
+        "            __call(_clientEvents[name][i], data);\r\n"
+        "        }\r\n"
+        "    }\r\n"
+        "    self.bindNotification('server', function(response) { \r\n"
         "       console.warn('All: ', response);\r\n"
         "       if (response.app != self.appName) {\r\n"
         "           console.error('AppName: ' + response.app + ', but expected ' + self.appName);\r\n"
@@ -444,8 +486,8 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebJSFile() {
         "           console.error('AppVersion: ' + response.version + ', but expected ' + self.appVersion);\r\n"
         "       }\r\n"
         "    }); \r\n"
-        "    self.handleCommand = function(response) {\r\n"
-        "       var lstn = _listeners[response.m];\r\n"
+        "    self.handleIncomeMessage = function(response) {\r\n"
+        "       var lstn = _listeners[response.id];\r\n"
         "       if (lstn) {\r\n"
         "           setTimeout(function() {\r\n"
         "               if (response['error']) {\r\n"
@@ -453,12 +495,15 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebJSFile() {
         "               } else {\r\n"
         "                   lstn.resolve(response);\r\n"
         "               }\r\n"
-        "               delete _listeners[response.m];\r\n"
+        "               delete _listeners[response.id];\r\n"
         "           },1);\r\n"
-        "       } else if (_events[response.cmd]) {\r\n"
-        "           _call(response.cmd, response);"
+        "        } else if (response.method === 'notification') {\r\n"
+        "            var nt_name = response.result['name'];\r\n"
+        "            if (_serverNotifications[nt_name]) {\r\n"
+        "                _callNotification(nt_name, response);\r\n"
+        "            }\r\n"
         "       } else {\r\n"
-        "           console.error('Not found handler for [' + response.cmd + '/' + response.m + ']');\r\n"
+        "           console.error('Not found handler for [' + response.method + '/' + response.id + ']');\r\n"
         "       }\r\n"
         "   };\r\n"
         "   self.send = function(obj, def) {\r\n"
@@ -482,17 +527,17 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebJSFile() {
         "        self.socket = new WebSocket(initParams.baseUrl);\r\n"
         "        self.socket.onopen = function() {\r\n"
         "           console.log('WS Opened');\r\n"
-        "           _call('connected', {});\r\n"
+        "           _callEvent('connected', {});\r\n"
         "           if (_tokenValue != '') self.token();\r\n"
         "        };\r\n"
         "        self.socket.onclose = function(event) {\r\n"
         "           console.log('Closed');\r\n"
         "           if (event.wasClean) {\r\n"
-        "               _call('disconnected', {});\r\n"
+        "               _callEvent('disconnected', {});\r\n"
         "           } else {\r\n"
-        "               _call('broken', {});\r\n"
+        "               _callEvent('broken', {});\r\n"
         "               setTimeout(function() {\r\n"
-        "                   _call('reconnecting', {});\r\n"
+        "                   _callEvent('reconnecting', {});\r\n"
         "                   self.init(initParams);\r\n"
         "               }, 10000);\r\n"
         "             // Try reconnect after 5 sec\r\n"
@@ -503,7 +548,7 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebJSFile() {
         "           // console.log('Received: ' + event.data);\r\n"
         "           try {\r\n"
         "               var response = JSON.parse(event.data);\r\n"
-        "               self.handleCommand(response);\r\n"
+        "               self.handleIncomeMessage(response);\r\n"
         "           } catch(e) {\r\n"
         "               console.error(e);\r\n"
         "           }\r\n"
@@ -639,7 +684,7 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebJSFile() {
 }
 
 // ---------------------------------------------------------------------
-
+/*
 bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebServiceTSFile() {
     std::string sFilename = this->getExportDir() + "/dist/" + this->getPackageName() + ".service.ts";
     std::ofstream libwjscppcli_web_service_ts_file;
@@ -870,8 +915,8 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebServiceTSFile() {
         "           console.error('AppVersion: ' + response.version + ', but expected ' + self.appVersion);\r\n"
         "       }\r\n"
         "    }); \r\n"
-        "    self.handleCommand = function(response) {\r\n"
-        "       var lstn = _listeners[response.m];\r\n"
+        "    self.handleIncomeMessage = function(response) {\r\n"
+        "       var lstn = _listeners[response.id];\r\n"
         "       if (lstn) {\r\n"
         "           setTimeout(function() {\r\n"
         "               if (response['error']) {\r\n"
@@ -879,21 +924,21 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebServiceTSFile() {
         "               } else {\r\n"
         "                   lstn.resolve(response);\r\n"
         "               }\r\n"
-        "               delete _listeners[response.m];\r\n"
+        "               delete _listeners[response.id];\r\n"
         "           },1);\r\n"
-        "       } else if (_events[response.cmd]) {\r\n"
-        "           _call(response.cmd, response);"
+        "       } else if (_serverNotification[response.method]) {\r\n"
+        "           _call(response.method, response);"
         "       } else {\r\n"
-        "           console.error('Not found handler for [' + response.cmd + '/' + response.m + ']');\r\n"
+        "           console.error('Not found handler for [' + response.method + '/' + response.id + ']');\r\n"
         "       }\r\n"
         "   };\r\n"
         "   self.send = function(obj, def) {\r\n"
-        "       obj.m = obj.m || _lm();\r\n"
-        "       _listeners[obj.m] = def || self.promise();\r\n"
+        "       obj.id = obj.id || _lm();\r\n"
+        "       _listeners[obj.id] = def || self.promise();\r\n"
         "       try {\r\n"
         "           if (self.socket.readyState == 0) {\r\n"
         "               setTimeout(function() {\r\n"
-        "                   self.send(obj, _listeners[obj.m]);\r\n"
+        "                   self.send(obj, _listeners[obj.id]);\r\n"
         "               },1000);\r\n"
         "           } else {\r\n"
         "               self.socket.send(JSON.stringify(obj));\r\n"
@@ -901,7 +946,7 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebServiceTSFile() {
         "       } catch(e) {\r\n"
         "           console.error(e);\r\n"
         "       }\r\n"
-        "       return _listeners[obj.m];\r\n"
+        "       return _listeners[obj.id];\r\n"
         "    }\r\n"
         "    self.init = function(initParams) {\r\n"
         "        if (!initParams.baseUrl) console.error('Expected baseUrl on initParams');\r\n"
@@ -929,7 +974,7 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebServiceTSFile() {
         "           // console.log('Received: ' + event.data);\r\n"
         "           try {\r\n"
         "               var response = JSON.parse(event.data);\r\n"
-        "               self.handleCommand(response);\r\n"
+        "               self.handleIncomeMessage(response);\r\n"
         "           } catch(e) {\r\n"
         "               console.error(e);\r\n"
         "           }\r\n"
@@ -1063,3 +1108,5 @@ bool WsjcppJsonRpc20ExportCliWebJs::exportLibCliWebServiceTSFile() {
     std::cout << "\t> OK" << std::endl;
     return true;
 }
+
+*/

@@ -1,4 +1,3 @@
-
 #include "wsjcpp_json_rpc20_handler_game_create.h"
 #include <wsjcpp_core.h>
 #include <wsjcpp_jsonrpc20.h>
@@ -41,6 +40,7 @@ WsjcppJsonRpc20HandlerGameCreate::WsjcppJsonRpc20HandlerGameCreate()
 void WsjcppJsonRpc20HandlerGameCreate::handle(WsjcppJsonRpc20Request *pRequest) {
     WsjcppLog::err(TAG, "Not implemented");
     pRequest->fail(WsjcppJsonRpc20Error(501, "NOT_IMPLEMENTED"));
+    // pRequest->notify(new WsjcppJsonRpc20NotifyChat());
 }
 
 

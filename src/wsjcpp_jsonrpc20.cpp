@@ -1101,6 +1101,22 @@ bool WsjcppJsonRpc20Request::checkInputParams(const std::vector<WsjcppJsonRpc20P
 }
 
 // ---------------------------------------------------------------------
+// WsjcppJsonRpc20NotificationBase
+
+WsjcppJsonRpc20NotificationBase::WsjcppJsonRpc20NotificationBase(const std::string &sNotificationName, const std::string &sDescription) {
+    TAG = "WsjcppJsonRpc20Notification-" + sNotificationName;
+    m_sNotificationName = sNotificationName;
+    m_sDescription = sDescription;
+    WsjcppJsonRpc20::registryNotification(m_sNotificationName, this);
+}
+
+// ---------------------------------------------------------------------
+
+std::string WsjcppJsonRpc20NotificationBase::getNotificationName() {
+    return m_sNotificationName;
+}
+
+// ---------------------------------------------------------------------
 // WsjcppJsonRpc20HandlerBase
 
 WsjcppJsonRpc20HandlerBase::WsjcppJsonRpc20HandlerBase(const std::string &sMethodName, const std::string &sDescription) {
@@ -1338,23 +1354,29 @@ void WsjcppJsonRpc20HandlerBase::validateParamName(const std::string &sName) {
 // WsjcppJsonRpc20
 
 std::map<std::string, WsjcppJsonRpc20HandlerBase*> *g_pWsjcppJsonRpc20HandlerList = nullptr;
+std::map<std::string, WsjcppJsonRpc20NotificationBase*> *g_pWsjcppJsonRpc20NotificationList = nullptr;
 
 void WsjcppJsonRpc20::initGlobalVariables() {
     if (g_pWsjcppJsonRpc20HandlerList == nullptr) {
         // WsjcppLog::info(std::string(), "Create handlers map");
         g_pWsjcppJsonRpc20HandlerList = new std::map<std::string, WsjcppJsonRpc20HandlerBase*>();
     }
+
+    if (g_pWsjcppJsonRpc20NotificationList == nullptr) {
+        // WsjcppLog::info(std::string(), "Create handlers map");
+        g_pWsjcppJsonRpc20NotificationList = new std::map<std::string, WsjcppJsonRpc20NotificationBase*>();
+    }
 }
 
 // ---------------------------------------------------------------------
 
-void WsjcppJsonRpc20::addHandler(const std::string &sCmd, WsjcppJsonRpc20HandlerBase* pCmdHandler) {
+void WsjcppJsonRpc20::addHandler(const std::string &sMethodName, WsjcppJsonRpc20HandlerBase* pHandler) {
     WsjcppJsonRpc20::initGlobalVariables();
-    if (g_pWsjcppJsonRpc20HandlerList->count(sCmd)) {
-        WsjcppLog::err(sCmd, "Already registered");
+    if (g_pWsjcppJsonRpc20HandlerList->count(sMethodName)) {
+        WsjcppLog::err(sMethodName, "Already registered");
     } else {
-        g_pWsjcppJsonRpc20HandlerList->insert(std::pair<std::string, WsjcppJsonRpc20HandlerBase*>(sCmd,pCmdHandler));
-        // WsjcppLog::info(sCmd, "Registered");
+        g_pWsjcppJsonRpc20HandlerList->insert(std::pair<std::string, WsjcppJsonRpc20HandlerBase*>(sMethodName,pHandler));
+        // WsjcppLog::info(sMethodName, "Registered");
     }
 }
 
@@ -1380,16 +1402,29 @@ WsjcppJsonRpc20HandlerBase * WsjcppJsonRpc20::findJsonRpc20Handler(const std::st
 
 // ---------------------------------------------------------------------
 
-std::vector<std::string> WsjcppJsonRpc20::getEventList() {
-    std::vector<std::string> vEvents;
-    // TODO
-    return vEvents;
+std::vector<std::string> WsjcppJsonRpc20::getNotificationList() {
+    WsjcppJsonRpc20::initGlobalVariables();
+    std::vector<std::string> vNotifications;
+    std::map<std::string, WsjcppJsonRpc20NotificationBase*>::iterator it;
+    for (it = g_pWsjcppJsonRpc20NotificationList->begin(); it != g_pWsjcppJsonRpc20NotificationList->end(); ++it) {
+        vNotifications.push_back(it->second->getNotificationName());
+    }
+    // TODO sort
+    return vNotifications;
 }
 
 // ---------------------------------------------------------------------
 
-void WsjcppJsonRpc20::registryEventFabric(const std::string &sEventName, WsjcppJsonRpc20EventBase* pEventFabric) {
-    // TODO
+void WsjcppJsonRpc20::registryNotification(const std::string &sNotificationName, WsjcppJsonRpc20NotificationBase* pNotification) {
+    WsjcppJsonRpc20::initGlobalVariables();
+    if (g_pWsjcppJsonRpc20NotificationList->count(sNotificationName)) {
+        WsjcppLog::err(sNotificationName, "Notification already registered");
+    } else {
+        g_pWsjcppJsonRpc20NotificationList->insert(
+            std::pair<std::string, WsjcppJsonRpc20NotificationBase*>(sNotificationName,pNotification)
+        );
+        // WsjcppLog::info(sNotificationName, "Registered");
+    }
 }
 
 // ---------------------------------------------------------------------
@@ -1458,3 +1493,13 @@ void WsjcppJsonRpc20HandlerServerApi::handle(WsjcppJsonRpc20Request *pRequest) {
     jsonResponse["data_length"] = nDataLength;
     pRequest->done(jsonResponse);
 }
+
+// ---------------------------------------------------------------------
+// WsjcppJsonRpc20NotificationServer
+
+REGISTRY_WSJCPP_JSONRPC20_NOTIFICATION(WsjcppJsonRpc20NotificationServer)
+
+WsjcppJsonRpc20NotificationServer::WsjcppJsonRpc20NotificationServer() 
+: WsjcppJsonRpc20NotificationBase("server", "Information about server") {
+    
+};

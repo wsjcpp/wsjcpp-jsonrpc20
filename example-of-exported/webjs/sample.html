@@ -1,33 +1,52 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <script src='dist/libwsjcppjson20client.js'></script>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>    <script src='dist/libwsjcppjson20client.js'></script>
     <script>
+        function formattedDate(d = new Date) {
+            const year = String(d.getFullYear());
+            let month = String(d.getMonth() + 1);
+            if (month.length < 2) month = '0' + month;
+            let day = String(d.getDate());
+            if (day.length < 2) day = '0' + day;
+            let hours = String(d.getHours());
+            if (hours.length < 2) hours = '0' + hours;
+            let mins = String(d.getMinutes());
+            if (mins.length < 2) mins = '0' + mins;
+            let secs = String(d.getSeconds());
+            if (secs.length < 2) secs = '0' + secs;
+            return `${year}-${month}-${day} ${hours}:${mins}:${secs}`;
+        }
         function log(n) {
             console.log(n);
             var log = document.getElementById('log');
-            log.innerHTML += '[' + new Date() + '] ' + n + '\r\n';
+            log.innerHTML += '[' + formattedDate() + '] ' + n + '\r\n';
         };
-        var client = new SomeClient();
+        var client = SomeClient
         document.addEventListener('DOMContentLoaded', function() {
-            client.bind('notify', function(data) {
+            client.bindNotification('chat', function(data) {
                 log('notify: ' + JSON.stringify(data))
             });
-            client.bind('connected', function(data) {
+            client.bindNotification('server', function(data) {
+                log('notify: ' + JSON.stringify(data))
+            });
+            client.bindEvent('connected', function(data) {
                 log('connected: ' + JSON.stringify(data))
                 connecting_form.style.display = 'none';
                 login_form.style.display = '';
                 logout_form.style.display = 'none';
             });
-            client.bind('disconnected', function(data) {
+            client.bindEvent('disconnected', function(data) {
                 log('disconnected: ' + JSON.stringify(data))
                 connecting_form.style.display = '';
                 login_form.style.display = 'none';
                 logout_form.style.display = 'none';
             });
-            client.bind('userdata', function(data) {
-                log('userdata: ' + JSON.stringify(data))
-                login_form.style.display = 'none';
-                logout_form.style.display = '';
+            client.bindEvent('reconnecting', function(data) {
+                log('reconnecting: ' + JSON.stringify(data))
+            });
+            client.bindEvent('broken', function(data) {
+                log('broken: ' + JSON.stringify(data))
             });
         });
     </script>
@@ -49,9 +68,9 @@
     <button id='btn_logout'>Logout</button>
 </div>
 <script>
-    server_url.value = 'ws://' + window.location.hostname + ':1234/api-ws/'
+    server_url.value = 'ws://localhost:1234/'
     btn_login.onclick = function() {
-        client.login({email: login.value, password: password.value}).done(function(r) { 
+        client.auth_login({login: login.value, password: password.value}).done(function(r) { 
             log('Login success, token = ' + r.token);
         }).fail(function(e) {
             log('Login failed, error = ' + e.error);
