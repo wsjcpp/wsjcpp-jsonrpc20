@@ -6,6 +6,23 @@
 #include <map>
 #include <iostream>
 #include <algorithm>
+#include <nlohmann/json.hpp>
+
+// ----------------------------------------------------------------------
+// WsjcppValidatorJsonBase
+
+class WsjcppValidatorJsonBase {
+    public:
+        WsjcppValidatorJsonBase(const std::string &typeName);
+        virtual WsjcppValidatorType getBaseType();
+        virtual std::string getTypeName();
+        virtual bool isValid(const nlohmann::json &nValue, std::string &sError) = 0;
+
+    protected:
+        std::string TAG;
+    private:
+        std::string m_sTypeName;
+};
 
 // ---------------------------------------------------------------------
 // WsjcppJsonRpc20Error
