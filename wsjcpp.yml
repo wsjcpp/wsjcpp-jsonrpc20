@@ -21,12 +21,6 @@ dependencies:
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_core"
     installation-datetime: "Sat, 03 Oct 2020 12:31:01 GMT"
-  - name: "nlohmann/json"
-    version: "v3.9.1"
-    url: "https://github.com/nlohmann/json:develop"
-    origin: "https://github.com/"
-    installation-dir: "./src.wsjcpp/nlohmann_json"
-    installation-datetime: "Fri, 02 Oct 2020 04:29:29 GMT"
   - name: "wsjcpp-validators"
     version: "v0.1.2"
     url: "https://github.com/wsjcpp/wsjcpp-validators:master"
@@ -34,6 +28,12 @@ dependencies:
     installation-dir: "./src.wsjcpp/wsjcpp_validators"
     installation-datetime: "Sat, 03 Oct 2020 12:46:55 GMT"
 
+  - name: "nlohmann/json"
+    version: "v3.12.0"
+    url: "https://github.com/wsjcpp/nlohmann_json:wsjcpp-copy-version"
+    origin: "https://github.com/"
+    installation-dir: "./src.wsjcpp/nlohmann_json"
+    installation-datetime: "Thu, 01 Jan 2026 05:33:20 GMT"
 distribution:
   - source-file: "src/wsjcpp_jsonrpc20.h"
     target-file: "wsjcpp_jsonrpc20.h"
@@ -75,3 +75,4 @@ unit-tests:
       description: ""
     - name: "RequestParseIncomeData"
       description: ""
+

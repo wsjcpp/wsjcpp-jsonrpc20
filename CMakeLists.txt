@@ -10,6 +10,7 @@ set(EXECUTABLE_OUTPUT_PATH ${wsjcpp-jsonrpc20_SOURCE_DIR})
 # include header dirs
 list (APPEND WSJCPP_INCLUDE_DIRS "src")
 list (APPEND WSJCPP_INCLUDE_DIRS "src/app")
+list (APPEND WSJCPP_INCLUDE_DIRS "src.wsjcpp/nlohmann_json/nlohmann")
 
 # package
 list (APPEND WSJCPP_SOURCES "src/wsjcpp_jsonrpc20.h")
