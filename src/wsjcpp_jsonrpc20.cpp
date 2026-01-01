@@ -2,8 +2,24 @@
 #include <wsjcpp_core.h>
 #include <regex>
 
+// ----------------------------------------------------------------------
+// WsjcppValidatorJsonBase
+
+WsjcppValidatorJsonBase::WsjcppValidatorJsonBase(const std::string &sTypeName) {
+    TAG = "WsjcppValidatorJsonBase";
+    m_sTypeName = sTypeName;
+}
+
+WsjcppValidatorType WsjcppValidatorJsonBase::getBaseType() {
+    return WsjcppValidatorType::WSJCPP_VALIDATOR_JSON;
+}
+
+std::string WsjcppValidatorJsonBase::getTypeName() {
+    return m_sTypeName;
+}
+
 // ---------------------------------------------------------------------
-// WsjcppJsonRpc20Error - 
+// WsjcppJsonRpc20Error
 
 WsjcppJsonRpc20Error::WsjcppJsonRpc20Error(
     int nErrorCode,
